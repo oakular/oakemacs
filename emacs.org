@@ -1,0 +1,235 @@
+#+TITLE: An Emacs configuration
+#+AUTHOR: Callum Warrilow
+* Frame
+  #+NAME: frame
+  #+BEGIN_SRC emacs-lisp
+    (line-number-mode t)
+    (column-number-mode t)
+    (size-indication-mode t)
+  #+END_SRC
+
+  Enable yes and no answers from ~y~ and ~n~.
+  #+BEGIN_SRC emacs-lisp
+    (fset 'yes-or-no-p 'y-or-n-p)
+  #+END_SRC
+* Identity
+  #+BEGIN_SRC emacs-lisp
+    (setq user-full-name "Callum Warrilow"
+	  user-mail-address "callum_warrilow@outlook.com")
+  #+END_SRC
+* Sane Defaults
+  Customize settings will be stored in a separate file.
+  #+BEGIN_SRC emacs-lisp noweb
+    (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+    (defun oak/reload-config () "Reloads the configuration."
+           (interactive)
+           (load-file (expand-file-name "init.el" user-emacs-directory)))
+
+    (defun oak/open-config () "Open the configuration project in a dired buffer."
+              (interactive)
+              (dired user-emacs-directory))
+  #+END_SRC
+* Package Management Setup
+  We set the load path ourselves, and disable ~package.el~ from
+  fetching and updating automatically.
+  #+BEGIN_SRC emacs-lisp
+    (eval-and-compile
+      (setq load-prefer-newer t
+	    package-user-dir (expand-file-name "pkg" user-emacs-directory)
+	    package--init-file-ensured t
+	    package-enable-at-startup nil)
+
+      (unless (file-directory-p package-user-dir)
+	(make-directory package-user-dir t)))
+
+
+    (eval-and-compile
+      (setq load-path (append load-path
+			      (directory-files package-user-dir t "^[^.]" t))))
+  #+END_SRC
+
+  Install ~[[https://github.com/jwiegley/use-package][use-package]]~
+  #+BEGIN_SRC emacs-lisp
+    (eval-when-compile
+      (require 'package)
+
+      (unless (assoc-default "melpa" package-archives)
+        (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t))
+      (unless (assoc-default "org" package-archives)
+        (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t))
+
+      (package-initialize)
+      (unless (package-installed-p 'use-package)
+        (package-refresh-contents)
+        (package-install 'use-package))
+
+      (require 'use-package)
+      (setq use-package-always-ensure t
+            use-package-always-defer t
+            use-package-verbose t))
+  #+END_SRC
+* Theme
+#+BEGIN_SRC emacs-lisp
+  (defun oak/setup-fonts () "Setup basic font configuration."
+         (set-face-attribute 'default nil :height 90)
+         (set-face-attribute 'default nil :width 'condensed)
+         (set-face-attribute 'default nil :family "Cascadia Mono"))
+
+  (defun oak/setup-doom-solarized () "Configure Doom Solarized themes"
+         (setq doom-solarized-dark-padded-modeline t)
+         (setq doom-solarized-dark-brighter-modeline nil)
+         (setq doom-solarized-light-padded-modeline t))
+
+  (use-package doom-themes
+    :ensure t
+    :config
+    (oak/setup-fonts)
+    (oak/setup-doom-solarized))
+
+  (use-package modus-themes
+    :ensure t
+    :demand
+    :pin gnu
+    :config
+    (oak/setup-fonts)
+    (load-theme 'modus-operandi t))
+#+END_SRC
+* Evil
+    Define Evil global keybindings and initialize the mode.
+    #+BEGIN_SRC emacs-lisp
+      (defun oak/evil-global-keys () "Defines global keybindings using Evil mode."
+          (evil-set-leader 'normal (kbd "SPC"))
+          (defconst keymaps '(("w" . save-buffer)
+                              ("ff" . find-file)
+                              ("bd" . kill-buffer)
+                              ("bb" . switch-to-buffer)
+                              ("." . dired)
+                              ("oa" . org-agenda)
+                              ("rc" . oak/reload-config)
+                              ("dP" . oak/open-config)))
+
+          (dolist (keymap keymaps) (oak/define-leader-key keymap) nil))
+
+      (defun oak/define-leader-key (keymap) "Defines a leader keymap for the keymap pairing given."
+             (evil-define-key 'normal 'global (kbd (concat "<leader>" (car keymap))) (cdr keymap)))
+
+      (use-package evil
+          :ensure t
+          :defer nil
+          :init
+          (evil-mode 1)
+          (setq evil-want-keybinding nil)
+          :config
+          (oak/evil-global-keys)
+          (setq evil-search-wrap t evil-regexp-search t))
+
+      (use-package evil-collection
+        :after (evil)
+        :config
+        (evil-collection-init 'dired))
+    #+END_SRC
+
+    Some evil plugins
+    #+BEGIN_SRC emacs-lisp
+      (use-package evil-commentary
+          :ensure t
+          :after (evil)
+          :init
+          (evil-commentary-mode))
+    #+END_SRC
+* Version Control
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+    :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
+    :config
+    (evil-collection-init 'magit)
+    (oak/define-leader-key '("vc" . magit-status)))
+
+  (use-package vc
+    :pin gnu
+    :config
+    (evil-collection-init '(vc-dir vc-git)))
+
+#+END_SRC
+* C#
+  #+BEGIN_SRC emacs-lisp
+    (use-package csharp-mode
+      :ensure t
+      :mode "\\.cs\\'"
+      :config
+      (setq display-line-numbers 'relative)
+      (add-hook 'csharp-mode-hook #'display-line-numbers-mode))
+
+    (use-package project
+      :demand
+      :pin gnu
+      :ensure t)
+
+    (use-package eglot
+      :ensure t
+      :pin gnu
+      :config
+      (setq project-vc-merge-submodules nil)
+      (add-to-list 'eglot-server-programs '(csharp-mode . ("~/bin/omnisharp/run" "-lsp"))))
+  #+END_SRC
+* Org
+  Sane org defaults
+  #+BEGIN_SRC emacs-lisp
+    (setq org-directory "~/dropbox/org/")
+    (setq org-archive-location (concat org-directory "archive/%s_archive::"))
+    (setq org-startup-with-latex-preview t)
+    (setq org-startup-indented t)
+    ;;(setq org-hide-emphasis-markers t)
+    (setq org-footnotes-auto-adjust t)
+  #+END_SRC
+
+  Org agenda configuration.
+  #+BEGIN_SRC emacs-lisp
+    (setq org-agenda-files (list
+			    (concat org-directory "journal.org")
+			    (concat org-directory "work.org")))
+
+    (setq org-agenda-span 1)
+    (setq org-agenda-window-setup 'other-window)
+    (setq org-agenda-show-all-dates t)
+    (setq org-agenda-skip-scheduled-if-done t)
+    (setq org-deadline-warning-days 3)
+    (setq org-reverse-note-order t)
+    (setq org-enforce-todo-dependencies t)
+    (setq org-agenda-show-future-repeats "next")
+    (setq org-agenda-use-time-grid nil)
+    (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 4))
+    (setq org-agenda-follow-indirect t)
+  #+END_SRC
+* Email
+#+begin_src emacs-lisp
+  (use-package gnus
+    :pin gnu
+    :config
+    (evil-collection-init 'gnus)
+    (setq gnus-select-method
+          '(nnimap "Email"
+               (nnimap-address "outlook.office365.com")
+               (nnimap-server-port 993)
+               (nnimap-stream ssl)
+               (nnimap-authinfo-file "~/.authinfo")
+               (send-mail-function 'smtpmail-send-it)
+               (smtpmail-smtp-server "smtp.office365.com")
+               (smtpmail-smtp-type 'starttls)
+               (smtpmail-smtp-service 587)))
+
+    (setq message-send-mail-function 'smtpmail-send-it)
+    (setq gnus-group-line-format "%g: %y%m\n"
+          gnus-summary-line-format "%U%R%B %d - %f: %s\n"))
+
+  (setq gnus-thread-sort-functions 'gnus-thread-sort-by-most-recent-date)
+#+end_src
+* Direnv
+#+begin_src emacs-lisp
+  (use-package envrc
+    :demand
+    :config
+    (envrc-global-mode))
+#+end_src
