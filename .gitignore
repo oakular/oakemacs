@@ -1,2 +1,11 @@
 pkg/
 pkg/*
+eshell/history
+custom.el
+emacs.el
+projects
+recentf
+tramp
+auto-save-list/.saves-8658-betws~
+transient/history.el
+auto-save-list/.saves-9034-betws~

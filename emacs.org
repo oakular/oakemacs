@@ -21,6 +21,9 @@
   Customize settings will be stored in a separate file.
   #+BEGIN_SRC emacs-lisp noweb
     (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+    (show-paren-mode 1)
+    (setq-default indent-tabs-mode nil)
+    (save-place-mode 1)
 
     (defun oak/reload-config () "Reloads the configuration."
            (interactive)
@@ -29,6 +32,20 @@
     (defun oak/open-config () "Open the configuration project in a dired buffer."
               (interactive)
               (dired user-emacs-directory))
+
+    (defun oak/backup-init (dirname) "Sets a backup directory under user-emacs-directory"
+           (let ((oak-backup-dir (concat user-emacs-directory dirname)))
+             (unless (file-directory-p oak-backup-dir)
+               (make-directory oak-backup-dir t)))
+
+           (setq backup-directory-alist
+                 `(("." . ,oak-backup-dir))))
+
+    (oak/backup-init "backups")
+
+    (defun oak/add-auto-mode (ext mode) "Appends to pairing parameter to the auto-mode alist"
+           (add-to-list 'auto-mode-alist '( (concat "\\" ext "\\'") mode)))
+
   #+END_SRC
 * Package Management Setup
   We set the load path ourselves, and disable ~package.el~ from
@@ -109,25 +126,25 @@
                               ("rc" . oak/reload-config)
                               ("dP" . oak/open-config)))
 
-          (dolist (keymap keymaps) (oak/define-leader-key keymap) nil))
+          (oak/define-leader-keymaps keymaps))
 
-      (defun oak/define-leader-key (keymap) "Defines a leader keymap for the keymap pairing given."
+      (defun oak/define-leader-keymap (keymap) "Defines a leader keymap for the keymap pairing given."
              (evil-define-key 'normal 'global (kbd (concat "<leader>" (car keymap))) (cdr keymap)))
+
+      (defun oak/define-leader-keymaps (keymaps) "Defines a set of leader keymaps for the keymap pairings given."
+           (dolist (keymap keymaps) (oak/define-leader-keymap keymap) nil))
 
       (use-package evil
           :ensure t
           :defer nil
           :init
-          (evil-mode 1)
           (setq evil-want-keybinding nil)
+          (evil-mode 1)
           :config
           (oak/evil-global-keys)
           (setq evil-search-wrap t evil-regexp-search t))
 
-      (use-package evil-collection
-        :after (evil)
-        :config
-        (evil-collection-init 'dired))
+      (use-package evil-collection :after (evil))
     #+END_SRC
 
     Some evil plugins
@@ -138,44 +155,138 @@
           :init
           (evil-commentary-mode))
     #+END_SRC
+* Dired
+#+begin_src emacs-lisp
+  (defun oak/dired-detailed () "Format dired with detailed listings."
+         (setq dired-listing-switches "-lh"))
+
+  (defun oak/dired-concise () "Format dired with concise listings."
+         (setq dired-listing-switches "-l1"))
+
+  (defun oak/dired-all () "Format dired with all listings."
+         (setq dired-listing-switches "-lah"))
+
+  (evil-collection-init 'dired)
+  (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+  (oak/dired-detailed)
+
+#+end_src
+
+Use the elisp =ls= implementation.
+#+begin_src emacs-lisp
+  (setq ls-lisp-use-insert-directory-program nil)
+  (require 'ls-lisp)
+#+end_src
 * Version Control
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :ensure t
     :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
+    :init
+    (oak/define-leader-keymap '("vcm" . magit-status))
     :config
-    (evil-collection-init 'magit)
-    (oak/define-leader-key '("vc" . magit-status)))
+    (evil-collection-init 'magit))
 
   (use-package vc
     :pin gnu
-    :config
-    (evil-collection-init '(vc-dir vc-git)))
+    :commands (vc-dir vc-log-outgoing vc-log-incoming vc-annotate)
+    :init
+    (oak/define-leader-keymap '("vcd" . project-vc-dir)))
 
 #+END_SRC
-* C#
+* Project Management
+#+begin_src emacs-lisp
+  (defun oak/project () "Setup project.el"
+         (oak/define-leader-keymaps '(("pd" . project-dired)
+                                     ("pf" . project-find-file)
+                                     ("pb" . project-switch-to-buffer)))
+         (setq project-vc-merge-submodules nil))
+
+  (use-package project
+    :demand
+    :pin gnu
+    :config
+    (oak/project))
+#+end_src
+* Software Development
+** Eglot
+The backbone of support for software development
+#+begin_src emacs-lisp
+  (use-package eglot :pin gnu)
+#+end_src
+** Compilation
+#+begin_src emacs-lisp
+  (setq compilation-window-height 10)
+  (setq compilation-scroll-output t)
+#+end_src
+** C#
   #+BEGIN_SRC emacs-lisp
     (use-package csharp-mode
       :ensure t
       :mode "\\.cs\\'"
       :config
+      (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
       (setq display-line-numbers 'relative)
-      (add-hook 'csharp-mode-hook #'display-line-numbers-mode))
-
-    (use-package project
-      :demand
-      :pin gnu
-      :ensure t)
-
-    (use-package eglot
-      :ensure t
-      :pin gnu
-      :config
-      (setq project-vc-merge-submodules nil)
       (add-to-list 'eglot-server-programs '(csharp-mode . ("~/bin/omnisharp/run" "-lsp"))))
   #+END_SRC
+
+  Define functions for migrations.
+  #+begin_src emacs-lisp
+    (defun oak/dotnet-migration-add (migration-name project)
+      "Add a migration to the given project"
+      (let ((default-directory (vc-root-dir)))
+        (async-shell-command (concat "dotnet ef migrations add" "-p"
+                                     project
+                                     migration-name))))
+
+    (defun oak/dotnet-migration-remove (project)
+      "Remove the latest migration from the given project"
+      (async-shell-command (concat "dotnet ef migrations remove"
+                                   "-p" project)))
+
+    (defun oak/dotnet-update-database (project &optional context)
+      "Update the database for the given project and context"
+      (async-shell-command (concat "dotnet ef database update"
+                                   "-p" project)))
+
+    (defun oak/do-dotnet-migration-add () "Interactively add a migration."
+           (interactive)
+           (oak/dotnet-migration-add (read-string "Migration name: ")
+                                     (read-directory-name "Project directory :")))
+
+    (defun oak/do-dotnet-migration-remove () "Interactively remove the latest migration."
+           (interactive)
+           (oak/dotnet-migration-remove (read-directory-name "Project directory :")))
+
+    (defun oak/do-dotnet-update-database ()
+      "Interactively update the database"
+      (interactive)
+      (oak/dotnet-update-database (read-string "Project name: ")))
+  #+end_src
+** NodeJS
+*** VueJS
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :config
+    (define-derived-mode vue-web-mode web-mode "Vue Web Mode")
+    (oak/add-auto-mode ".vue" vue-web-mode)
+    (setq vue-web-mode-script-padding 0)
+    (add-hook 'vue-web-mode-hook 'eglot-ensure))
+#+end_src
+* Ebooks
+#+begin_src emacs-lisp
+  (use-package nov
+    :config
+    (evil-collection-init 'nov)
+    (defun set-nov-font ()
+      (face-remap-add-relative 'variable-pitch
+                               :family "Liberation Serif"
+                               :height 1.5))
+    (setq nov-text-width 80)
+    (oak/add-auto-mode ".epub" nov-mode))
+#+end_src
 * Org
-  Sane org defaults
+Sane org defaults
   #+BEGIN_SRC emacs-lisp
     (setq org-directory "~/dropbox/org/")
     (setq org-archive-location (concat org-directory "archive/%s_archive::"))
@@ -185,7 +296,7 @@
     (setq org-footnotes-auto-adjust t)
   #+END_SRC
 
-  Org agenda configuration.
+Org agenda configuration.
   #+BEGIN_SRC emacs-lisp
     (setq org-agenda-files (list
 			    (concat org-directory "journal.org")
@@ -226,10 +337,28 @@
 
   (setq gnus-thread-sort-functions 'gnus-thread-sort-by-most-recent-date)
 #+end_src
-* Direnv
+* Shell
+#+begin_src emacs-lisp
+  (defvar oak-shell "/bin/bash" "The default shell to be used.")
+
+  (defun oak/term () "Opens an ansi-term buffer using the shell set by oak-shell"
+         (interactive)
+         (ansi-term oak-shell))
+
+  (oak/define-leader-keymap '("T" . oak/term))
+#+end_src
+** Direnv
 #+begin_src emacs-lisp
   (use-package envrc
     :demand
     :config
     (envrc-global-mode))
+#+end_src
+** Commands
+#+begin_src emacs-lisp
+  (defun oak/restart-vpn () "Restart the openvpn instance."
+         (interactive)
+         (shell-command "doas sv restart openvpn"))
+
+  (oak/define-leader-keymap ("!vr" oak/restart-vpn))
 #+end_src
