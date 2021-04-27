@@ -36,10 +36,9 @@
     (defun oak/backup-init (dirname) "Sets a backup directory under user-emacs-directory"
            (let ((oak-backup-dir (concat user-emacs-directory dirname)))
              (unless (file-directory-p oak-backup-dir)
-               (make-directory oak-backup-dir t)))
-
-           (setq backup-directory-alist
-                 `(("." . ,oak-backup-dir))))
+               (make-directory oak-backup-dir t))
+             (setq backup-directory-alist
+                   `(("." . ,oak-backup-dir)))))
 
     (oak/backup-init "backups")
 
@@ -134,17 +133,17 @@
       (defun oak/define-leader-keymaps (keymaps) "Defines a set of leader keymaps for the keymap pairings given."
            (dolist (keymap keymaps) (oak/define-leader-keymap keymap) nil))
 
-      (use-package evil
-          :ensure t
-          :defer nil
-          :init
-          (setq evil-want-keybinding nil)
-          (evil-mode 1)
-          :config
-          (oak/evil-global-keys)
-          (setq evil-search-wrap t evil-regexp-search t))
+      ;; (use-package evil
+      ;;     :ensure t
+      ;;     :defer nil
+      ;;     :init
+      ;;     (setq evil-want-keybinding nil)
+      ;;     ;; (evil-mode 1)
+      ;;     :config
+      ;;     (oak/evil-global-keys)
+      ;;     (setq evil-search-wrap t evil-regexp-search t))
 
-      (use-package evil-collection :after (evil))
+      ;; (use-package evil-collection :after (evil))
     #+END_SRC
 
     Some evil plugins
@@ -227,7 +226,10 @@ The backbone of support for software development
       :config
       (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
       (setq display-line-numbers 'relative)
-      (add-to-list 'eglot-server-programs '(csharp-mode . ("~/bin/omnisharp/run" "-lsp"))))
+      (let ((omnisharp-path (if WINDOWS
+                                "~/bin/ominsharp/OmniSharp.exe"
+                              "~/bin/omnisharp/run")))
+        (add-to-list 'eglot-server-programs '(csharp-mode . ("~/bin/omnisharp/run" "-lsp")))))
   #+END_SRC
 
   Define functions for migrations.
