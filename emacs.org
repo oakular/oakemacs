@@ -65,7 +65,7 @@
 			      (directory-files package-user-dir t "^[^.]" t))))
   #+END_SRC
 
-  Install ~[[https://github.com/jwiegley/use-package][use-package]]~
+  Install [[https://github.com/jwiegley/use-package][use-package]]
   #+BEGIN_SRC emacs-lisp
     (eval-when-compile
       (require 'package)
@@ -92,26 +92,44 @@
          (set-face-attribute 'default nil :width 'condensed)
          (set-face-attribute 'default nil :family "Cascadia Mono"))
 
-  (defun oak/setup-doom-solarized () "Configure Doom Solarized themes"
-         (setq doom-solarized-dark-padded-modeline t)
-         (setq doom-solarized-dark-brighter-modeline nil)
-         (setq doom-solarized-light-padded-modeline t))
-
-  (use-package doom-themes
-    :ensure t
-    :config
-    (oak/setup-fonts)
-    (oak/setup-doom-solarized))
-
   (use-package modus-themes
     :ensure t
     :demand
     :pin gnu
     :config
-    (oak/setup-fonts)
     (load-theme 'modus-operandi t))
+
+  (defvar oak-dark-theme 'modus-vivendi)
+  (defvar oak-light-theme 'modus-operandi)
+
+  (defun oak/load-dark-theme ()
+    (interactive)
+    (load-theme oak-dark-theme t))
+
+  (defun oak/load-light-theme ()
+    (interactive)
+    (load-theme oak-light-theme t))
+
+  (oak/setup-fonts)
 #+END_SRC
-* Evil
+* Global Keys
+#+begin_src emacs-lisp
+  (defun oak/define-global-keymap (keymap) "Define a keymap of global scope."
+         (let ((map global-map))
+           (define-key map (kbd (car keymap)) (cdr keymap))))
+
+  (defun oak/define-global-keymaps (keymaps) "Define a set of keymaps of global scope."
+         (dolist (keymap keymaps) (oak/define-global-keymap keymap) nil))
+
+  (defun oak/global-keymaps () "Enables all global keymaps."
+         (let ((keymaps '(("C-x cr" . oak/reload-config)
+                          ("C-x ctd" . oak/load-dark-theme)
+                          ("C-x ctl" . oak/load-light-theme))))
+           (oak/define-global-keymaps keymaps)))
+
+  (oak/global-keymaps)
+#+end_src
+* Evil                                                              :ARCHIVE:
     Define Evil global keybindings and initialize the mode.
     #+BEGIN_SRC emacs-lisp
       (defun oak/evil-global-keys () "Defines global keybindings using Evil mode."
@@ -182,23 +200,18 @@ Use the elisp =ls= implementation.
     :ensure t
     :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
     :init
-    (oak/define-leader-keymap '("vcm" . magit-status))
+    (oak/define-global-keymap '("C-x vcm" . magit-status))
     :config
     (evil-collection-init 'magit))
 
   (use-package vc
     :pin gnu
-    :commands (vc-dir vc-log-outgoing vc-log-incoming vc-annotate)
-    :init
-    (oak/define-leader-keymap '("vcd" . project-vc-dir)))
+    :commands (vc-dir vc-log-outgoing vc-log-incoming vc-annotate))
 
 #+END_SRC
 * Project Management
 #+begin_src emacs-lisp
   (defun oak/project () "Setup project.el"
-         (oak/define-leader-keymaps '(("pd" . project-dired)
-                                     ("pf" . project-find-file)
-                                     ("pb" . project-switch-to-buffer)))
          (setq project-vc-merge-submodules nil))
 
   (use-package project
@@ -265,6 +278,13 @@ The backbone of support for software development
       (interactive)
       (oak/dotnet-update-database (read-string "Project name: ")))
   #+end_src
+** Csv
+#+begin_src emacs-lisp
+  (use-package csv-mode
+    :pin gnu
+    :config
+    (oak/add-auto-mode ".csv" 'csv-mode))
+#+end_src
 ** NodeJS
 *** VueJS
 #+begin_src emacs-lisp
@@ -294,15 +314,15 @@ Sane org defaults
     (setq org-archive-location (concat org-directory "archive/%s_archive::"))
     (setq org-startup-with-latex-preview t)
     (setq org-startup-indented t)
-    ;;(setq org-hide-emphasis-markers t)
+    (setq org-hide-emphasis-markers nil)
     (setq org-footnotes-auto-adjust t)
   #+END_SRC
 
 Org agenda configuration.
   #+BEGIN_SRC emacs-lisp
     (setq org-agenda-files (list
-			    (concat org-directory "journal.org")
-			    (concat org-directory "work.org")))
+                            (concat org-directory "journal.org")
+                            (concat org-directory "work.org")))
 
     (setq org-agenda-span 1)
     (setq org-agenda-window-setup 'other-window)
@@ -315,6 +335,8 @@ Org agenda configuration.
     (setq org-agenda-use-time-grid nil)
     (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 4))
     (setq org-agenda-follow-indirect t)
+
+    (oak/define-global-keymap '("C-c oa" . org-agenda))
   #+END_SRC
 * Email
 #+begin_src emacs-lisp
@@ -347,7 +369,7 @@ Org agenda configuration.
          (interactive)
          (ansi-term oak-shell))
 
-  (oak/define-leader-keymap '("T" . oak/term))
+  (oak/define-global-keymap '("C-x tt" . oak/term))
 #+end_src
 ** Direnv
 #+begin_src emacs-lisp
@@ -356,11 +378,21 @@ Org agenda configuration.
     :config
     (envrc-global-mode))
 #+end_src
+** Eshell
+#+begin_src emacs-lisp
+(oak/define-global-keymap '("C-x te" . eshell))
+#+end_src
 ** Commands
 #+begin_src emacs-lisp
   (defun oak/restart-vpn () "Restart the openvpn instance."
          (interactive)
          (shell-command "doas sv restart openvpn"))
 
-  (oak/define-leader-keymap ("!vr" oak/restart-vpn))
+  (oak/define-global-keymap '("C-x !vr" . oak/restart-vpn))
+
+  (defun oak/suspend () "Suspend the host machine."
+         (interactive)
+         (shell-command "loginctl suspend"))
+
+  (oak/define-global-keymap '("C-x !s" . oak/suspend))
 #+end_src
