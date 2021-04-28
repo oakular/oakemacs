@@ -24,6 +24,7 @@
     (show-paren-mode 1)
     (setq-default indent-tabs-mode nil)
     (save-place-mode 1)
+    (setq visible-bell t)
 
     (defun oak/reload-config () "Reloads the configuration."
            (interactive)
@@ -223,6 +224,15 @@ The backbone of support for software development
 #+begin_src emacs-lisp
   (use-package eglot :pin gnu)
 #+end_src
+** Web Mode
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :mode "\\.cshtml\\'"
+    :config
+    (add-hook 'web-mode-hook #'hl-line-mode))
+
+  (oak/add-auto-mode ".css" 'web-mode)
+#+end_src
 ** Compilation
 #+begin_src emacs-lisp
   (setq compilation-window-height 10)
@@ -236,6 +246,7 @@ The backbone of support for software development
       :config
       (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
       (setq display-line-numbers 'relative)
+      (add-hook 'csharp-mode-hook #'hl-line-mode)
       (let ((omnisharp-path (if WINDOWS
                                 "~/bin/ominsharp/OmniSharp.exe"
                               "~/bin/omnisharp/run")))
@@ -282,16 +293,19 @@ The backbone of support for software development
     :config
     (oak/add-auto-mode ".csv" 'csv-mode))
 #+end_src
-** NodeJS
-*** VueJS
+** Javascript
 #+begin_src emacs-lisp
-  (use-package web-mode
-    :config
-    (define-derived-mode vue-web-mode web-mode "Vue Web Mode")
-    (oak/add-auto-mode ".vue" vue-web-mode)
-    (setq vue-web-mode-script-padding 0)
-    (add-hook 'vue-web-mode-hook 'eglot-ensure))
+  (use-package js2-mode
+    :mode "\\.js\\'")
 #+end_src
+*** NodeJS
+**** VueJS
+ #+begin_src emacs-lisp
+     (define-derived-mode vue-web-mode web-mode "Vue Web Mode")
+     (oak/add-auto-mode ".vue" 'vue-web-mode)
+     (setq vue-web-mode-script-padding 0)
+     (add-hook 'vue-web-mode-hook 'eglot-ensure)
+ #+end_src
 * Ebooks
 #+begin_src emacs-lisp
   (use-package nov
