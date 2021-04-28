@@ -183,7 +183,6 @@
   (defun oak/dired-all () "Format dired with all listings."
          (setq dired-listing-switches "-lah"))
 
-  (evil-collection-init 'dired)
   (add-hook 'dired-mode-hook #'dired-hide-details-mode)
   (oak/dired-detailed)
 
@@ -200,9 +199,7 @@ Use the elisp =ls= implementation.
     :ensure t
     :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
     :init
-    (oak/define-global-keymap '("C-x vcm" . magit-status))
-    :config
-    (evil-collection-init 'magit))
+    (oak/define-global-keymap '("C-x vcm" . magit-status)))
 
   (use-package vc
     :pin gnu
@@ -299,7 +296,6 @@ The backbone of support for software development
 #+begin_src emacs-lisp
   (use-package nov
     :config
-    (evil-collection-init 'nov)
     (defun set-nov-font ()
       (face-remap-add-relative 'variable-pitch
                                :family "Liberation Serif"
@@ -343,7 +339,6 @@ Org agenda configuration.
   (use-package gnus
     :pin gnu
     :config
-    (evil-collection-init 'gnus)
     (setq gnus-select-method
           '(nnimap "Email"
                (nnimap-address "outlook.office365.com")
