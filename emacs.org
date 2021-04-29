@@ -212,6 +212,15 @@ Use the elisp =ls= implementation.
   (defun oak/project () "Setup project.el"
          (setq project-vc-merge-submodules nil))
 
+  (defun oak/shell-command-project-root (cmd)
+    "Run a shell command in the root of the current project."
+    (oak/exec-fun-project-root (shell-command cmd)))
+
+  (defun oak/exec-fun-project-root (fun)
+    "Execute a function in the context of the project root."
+    (let ((default-directory (vc-root-dir)))
+      (funcall fun)))
+
   (use-package project
     :demand
     :pin gnu
@@ -256,36 +265,52 @@ The backbone of support for software development
 
   Define functions for migrations.
   #+begin_src emacs-lisp
-    (defun oak/dotnet-migration-add (migration-name project)
+    (defun oak/dotnet-migration-add (migration-name project &optional context)
       "Add a migration to the given project"
-      (let ((default-directory (vc-root-dir)))
-        (async-shell-command (concat "dotnet ef migrations add" "-p"
-                                     project
-                                     migration-name))))
+      (oak/shell-command-project-root
+       (oak/build-shell-cmd
+        (list "dotnet" "ef" "migrations" "add" "-p" project
+              (when context (concat "-c" " " context))
+              migration-name))))
 
-    (defun oak/dotnet-migration-remove (project)
+    (defun oak/dotnet-migration-remove (project &optional context)
       "Remove the latest migration from the given project"
-      (async-shell-command (concat "dotnet ef migrations remove"
-                                   "-p" project)))
+          (oak/shell-command-project-root
+           (oak/build-shell-cmd
+            (list "dotnet" "ef" "migrations" "remove"
+                  "-p" project
+                  (when context (concat "-c" " " context))))))
+
 
     (defun oak/dotnet-update-database (project &optional context)
       "Update the database for the given project and context"
-      (async-shell-command (concat "dotnet ef database update"
-                                   "-p" project)))
+      (oak/shell-command-project-root
+       (oak/build-shell-cmd
+        (list "dotnet ef database update"
+              "-p" project 
+              (when context (concat "-c" " " context))))))
 
-    (defun oak/do-dotnet-migration-add () "Interactively add a migration."
-           (interactive)
-           (oak/dotnet-migration-add (read-string "Migration name: ")
-                                     (read-directory-name "Project directory :")))
+    (defun oak/do-dotnet-migration-add ()
+      "Interactively add a migration."
+      (interactive)
+      (oak/exec-fun-project-root
+       (oak/dotnet-migration-add (read-string "Migration name: ")
+                                 (read-directory-name "Project directory: ")
+                                 (read-string "Context: "))))
 
-    (defun oak/do-dotnet-migration-remove () "Interactively remove the latest migration."
-           (interactive)
-           (oak/dotnet-migration-remove (read-directory-name "Project directory :")))
+    (defun oak/do-dotnet-migration-remove ()
+      "Interactively remove the latest migration."
+      (interactive)
+      (oak/exec-fun-project-root
+       (oak/dotnet-migration-remove (read-directory-name "Project directory: ")
+                                    (read-string "Context: "))))
 
     (defun oak/do-dotnet-update-database ()
       "Interactively update the database"
       (interactive)
-      (oak/dotnet-update-database (read-string "Project name: ")))
+      (oak/exec-fun-project-root
+       (oak/dotnet-update-database (read-directory-name "Project directory: ")
+                                   (read-string "Context :"))))
   #+end_src
 ** Csv
 #+begin_src emacs-lisp
@@ -381,6 +406,10 @@ Org agenda configuration.
   (defun oak/term () "Opens an ansi-term buffer using the shell set by oak-shell"
          (interactive)
          (ansi-term oak-shell))
+
+  (defun oak/build-shell-cmd (cmd-elements)
+    "Build a command string from the elements passed as parameter."
+    (mapconcat 'identity cmd-elements " "))
 
   (oak/define-global-keymap '("C-x tt" . oak/term))
 #+end_src
