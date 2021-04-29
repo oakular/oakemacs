@@ -60,10 +60,10 @@
       (unless (file-directory-p package-user-dir)
         (make-directory package-user-dir t)))
 
-
-    (eval-and-compile
-      (add-to-list 'load-path
-                   (directory-files package-user-dir t "^[^.]" t)))
+    (defun oak/instantiate-load-path ()
+      "Add all subdirectories of package-user-dir to the load-path"
+      (let ((default-directory package-user-dir))
+        (normal-top-level-add-subdirs-to-load-path)))
   #+END_SRC
 
   Install [[https://github.com/jwiegley/use-package][use-package]]
@@ -231,7 +231,7 @@ The backbone of support for software development
     :config
     (add-hook 'web-mode-hook #'hl-line-mode))
 
-  (add-to-list 'auto-mode-alist  "\\.css\\'" 'web-mode)
+  (add-to-list 'auto-mode-alist  '("\\.css\\'" 'web-mode))
 #+end_src
 ** Compilation
 #+begin_src emacs-lisp
@@ -309,13 +309,13 @@ The backbone of support for software development
 * Ebooks
 #+begin_src emacs-lisp
   (use-package nov
+    :mode ("\\.epub\\'" . nov-mode)
     :config
     (defun set-nov-font ()
       (face-remap-add-relative 'variable-pitch
                                :family "Liberation Serif"
                                :height 1.5))
-    (setq nov-text-width 80)
-    (add-to-list 'auto-mode-alist "\\.epub\\'" 'nov-mode))
+    (setq nov-text-width 80))
 #+end_src
 * Org
 Sane org defaults
@@ -354,7 +354,6 @@ Org agenda configuration.
 * Email
 #+begin_src emacs-lisp
   (use-package gnus
-    :pin gnu
     :config
     (setq gnus-select-method
           '(nnimap "Email"
