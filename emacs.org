@@ -231,7 +231,7 @@ The backbone of support for software development
     :config
     (add-hook 'web-mode-hook #'hl-line-mode))
 
-  (oak/add-auto-mode ".css" 'web-mode)
+  (add-to-list 'auto-mode-alist  "\\.css\\'" 'web-mode)
 #+end_src
 ** Compilation
 #+begin_src emacs-lisp
@@ -291,7 +291,7 @@ The backbone of support for software development
   (use-package csv-mode
     :pin gnu
     :config
-    (oak/add-auto-mode ".csv" 'csv-mode))
+    (add-to-list 'auto-mode-alist "\\.csv\\'" 'csv-mode))
 #+end_src
 ** Javascript
 #+begin_src emacs-lisp
@@ -302,7 +302,7 @@ The backbone of support for software development
 **** VueJS
  #+begin_src emacs-lisp
      (define-derived-mode vue-web-mode web-mode "Vue Web Mode")
-     (oak/add-auto-mode ".vue" 'vue-web-mode)
+     (add-to-list 'auto-mode-alist "\\.vue\\'" 'vue-web-mode)
      (setq vue-web-mode-script-padding 0)
      (add-hook 'vue-web-mode-hook 'eglot-ensure)
  #+end_src
@@ -315,11 +315,14 @@ The backbone of support for software development
                                :family "Liberation Serif"
                                :height 1.5))
     (setq nov-text-width 80)
-    (oak/add-auto-mode ".epub" nov-mode))
+    (add-to-list 'auto-mode-alist "\\.epub\\'" nov-mode))
 #+end_src
 * Org
 Sane org defaults
   #+BEGIN_SRC emacs-lisp
+    (use-package org
+      :pin org)
+
     (setq org-directory "~/dropbox/org/")
     (setq org-archive-location (concat org-directory "archive/%s_archive::"))
     (setq org-startup-with-latex-preview t)
