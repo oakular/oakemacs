@@ -243,6 +243,7 @@ The backbone of support for software development
     (use-package csharp-mode
       :ensure t
       :mode "\\.cs\\'"
+      :after eglot
       :config
       (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
       (setq display-line-numbers 'relative)
@@ -296,6 +297,7 @@ The backbone of support for software development
 ** Javascript
 #+begin_src emacs-lisp
   (use-package js2-mode
+    :after eglot
     :mode "\\.js\\'")
 #+end_src
 *** NodeJS
