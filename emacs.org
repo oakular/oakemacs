@@ -24,6 +24,7 @@
     (show-paren-mode 1)
     (setq-default indent-tabs-mode nil)
     (save-place-mode 1)
+    (setq visible-bell t)
 
     (defun oak/reload-config () "Reloads the configuration."
            (interactive)
@@ -183,7 +184,6 @@
   (defun oak/dired-all () "Format dired with all listings."
          (setq dired-listing-switches "-lah"))
 
-  (evil-collection-init 'dired)
   (add-hook 'dired-mode-hook #'dired-hide-details-mode)
   (oak/dired-detailed)
 
@@ -200,9 +200,7 @@ Use the elisp =ls= implementation.
     :ensure t
     :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
     :init
-    (oak/define-global-keymap '("C-x vcm" . magit-status))
-    :config
-    (evil-collection-init 'magit))
+    (oak/define-global-keymap '("C-x vcm" . magit-status)))
 
   (use-package vc
     :pin gnu
@@ -226,6 +224,15 @@ The backbone of support for software development
 #+begin_src emacs-lisp
   (use-package eglot :pin melpa)
 #+end_src
+** Web Mode
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :mode "\\.cshtml\\'"
+    :config
+    (add-hook 'web-mode-hook #'hl-line-mode))
+
+  (add-to-list 'auto-mode-alist  "\\.css\\'" 'web-mode)
+#+end_src
 ** Compilation
 #+begin_src emacs-lisp
   (setq compilation-window-height 10)
@@ -239,6 +246,7 @@ The backbone of support for software development
       :config
       (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
       (setq display-line-numbers 'relative)
+      (add-hook 'csharp-mode-hook #'hl-line-mode)
       (let ((omnisharp-path (if WINDOWS
                                 "~/bin/ominsharp/OmniSharp.exe"
                               "~/bin/omnisharp/run")))
@@ -283,33 +291,38 @@ The backbone of support for software development
   (use-package csv-mode
     :pin gnu
     :config
-    (oak/add-auto-mode ".csv" 'csv-mode))
+    (add-to-list 'auto-mode-alist "\\.csv\\'" 'csv-mode))
 #+end_src
-** NodeJS
-*** VueJS
+** Javascript
 #+begin_src emacs-lisp
-  (use-package web-mode
-    :config
-    (define-derived-mode vue-web-mode web-mode "Vue Web Mode")
-    (oak/add-auto-mode ".vue" vue-web-mode)
-    (setq vue-web-mode-script-padding 0)
-    (add-hook 'vue-web-mode-hook 'eglot-ensure))
+  (use-package js2-mode
+    :mode "\\.js\\'")
 #+end_src
+*** NodeJS
+**** VueJS
+ #+begin_src emacs-lisp
+     (define-derived-mode vue-web-mode web-mode "Vue Web Mode")
+     (add-to-list 'auto-mode-alist "\\.vue\\'" 'vue-web-mode)
+     (setq vue-web-mode-script-padding 0)
+     (add-hook 'vue-web-mode-hook 'eglot-ensure)
+ #+end_src
 * Ebooks
 #+begin_src emacs-lisp
   (use-package nov
     :config
-    (evil-collection-init 'nov)
     (defun set-nov-font ()
       (face-remap-add-relative 'variable-pitch
                                :family "Liberation Serif"
                                :height 1.5))
     (setq nov-text-width 80)
-    (oak/add-auto-mode ".epub" nov-mode))
+    (add-to-list 'auto-mode-alist "\\.epub\\'" nov-mode))
 #+end_src
 * Org
 Sane org defaults
   #+BEGIN_SRC emacs-lisp
+    (use-package org
+      :pin org)
+
     (setq org-directory "~/dropbox/org/")
     (setq org-archive-location (concat org-directory "archive/%s_archive::"))
     (setq org-startup-with-latex-preview t)
@@ -343,7 +356,6 @@ Org agenda configuration.
   (use-package gnus
     :pin gnu
     :config
-    (evil-collection-init 'gnus)
     (setq gnus-select-method
           '(nnimap "Email"
                (nnimap-address "outlook.office365.com")
