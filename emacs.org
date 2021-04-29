@@ -434,7 +434,7 @@ Org agenda configuration.
 
   (defun oak/suspend () "Suspend the host machine."
          (interactive)
-         (shell-command "loginctl suspend"))
+         (shell-command (if (not WINDOWS) "loginctl suspend" "shutdown /h")))
 
   (defun oak/tokindle () "Sync file(s) to a mounted kindle"
          (interactive)
