@@ -260,7 +260,7 @@ The backbone of support for software development
       (let ((omnisharp-path (if WINDOWS
                                 "~/bin/ominsharp/OmniSharp.exe"
                               "~/bin/omnisharp/run")))
-        (add-to-list 'eglot-server-programs '(csharp-mode . ("~/bin/omnisharp/run" "-lsp")))))
+        (add-to-list 'eglot-server-programs '(csharp-mode . (omnisharp-path "-lsp")))))
   #+END_SRC
 
   Define functions for migrations.
