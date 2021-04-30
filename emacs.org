@@ -258,9 +258,9 @@ The backbone of support for software development
       (setq display-line-numbers 'relative)
       (add-hook 'csharp-mode-hook #'hl-line-mode)
       (let ((omnisharp-path (if WINDOWS
-                                "~/bin/ominsharp/OmniSharp.exe"
+                                "~/bin/omnisharp/OmniSharp.exe"
                               "~/bin/omnisharp/run")))
-        (add-to-list 'eglot-server-programs '(csharp-mode . (omnisharp-path "-lsp")))))
+        (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp")))))
   #+END_SRC
 
   Define functions for migrations.
