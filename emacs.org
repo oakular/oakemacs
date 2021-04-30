@@ -265,6 +265,21 @@ The backbone of support for software development
 
   Define functions for migrations.
   #+begin_src emacs-lisp
+    (defvar oak-dotnet-migration-project nil
+      "The project directory (relative or absolute) containing project migrations.")
+
+    (defvar oak-dotnet-prompt-for-context nil
+      "Determine whether the user should be prompted for the context name when running migration commands")
+
+    (defun oak/dotnet-get-migration-project ()
+      "Gets the migration project if set as a variable, and fallsback to user input."
+      (expand-file-name
+       (or oak-dotnet-migration-project (read-directory-name "Project directory: "))))
+
+    (defun oak/dotnet-get-context-name ()
+      "Gets the name of the context if oak-dotnet-prompt-for-context is set."
+      (when oak-dotnet-prompt-for-context (read-string "Context: ")))
+
     (defun oak/dotnet-migration-add (migration-name project &optional context)
       "Add a migration to the given project"
       (oak/shell-command-project-root
@@ -281,7 +296,6 @@ The backbone of support for software development
                   "-p" project
                   (when context (concat "-c" " " context))))))
 
-
     (defun oak/dotnet-update-database (project &optional context)
       "Update the database for the given project and context"
       (oak/shell-command-project-root
@@ -295,22 +309,22 @@ The backbone of support for software development
       (interactive)
       (oak/exec-fun-project-root
        (oak/dotnet-migration-add (read-string "Migration name: ")
-                                 (read-directory-name "Project directory: ")
-                                 (read-string "Context: "))))
+                                 (oak/dotnet-get-migration-project)
+                                 (oak/dotnet-get-context-name))))
 
     (defun oak/do-dotnet-migration-remove ()
       "Interactively remove the latest migration."
       (interactive)
       (oak/exec-fun-project-root
-       (oak/dotnet-migration-remove (read-directory-name "Project directory: ")
-                                    (read-string "Context: "))))
+       (oak/dotnet-migration-remove (oak/dotnet-get-migration-project)
+                                    (oak/dotnet-get-context-name))))
 
     (defun oak/do-dotnet-update-database ()
       "Interactively update the database"
       (interactive)
       (oak/exec-fun-project-root
-       (oak/dotnet-update-database (read-directory-name "Project directory: ")
-                                   (read-string "Context :"))))
+       (oak/dotnet-update-database (oak/dotnet-migration-project)
+                                   (oak/dotnet-get-context-name))))
   #+end_src
 ** Csv
 #+begin_src emacs-lisp
