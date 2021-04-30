@@ -130,6 +130,34 @@
 
   (oak/global-keymaps)
 #+end_src
+* Window Management
+We define some rules about how certain buffers should appear.  This is
+mainly to prevent informative buffers from taking up unnecessary
+screen real estate.
+#+begin_src emacs-lisp
+    (setq display-buffer-alist
+          `(("\\*Help.*"
+            (display-buffer-in-side-window)
+            (window-width . 0.3)
+            (side . right)
+            (slot . 0))
+            ("\\*\\(compilation\\|vc-git :\\).*"
+             (display-buffer-in-side-window)
+             (window-height . 0.15)
+             (side . bottom)
+             (slot . -1)
+             (window-parameters . ((no-other-window . t))))
+            ("\\*.*\\(e?shell\\|v?term\\|ansi-term\\).*"
+             (display-buffer-reuse-mode-window display-buffer-at-bottom)
+             (window-height . 0.2))
+            ("^\\(magit:\\|*vc-dir\\).*"
+             (display-buffer-in-side-window)
+             (side . right)
+             (window-width . 0.40))))
+
+  (add-hook 'help-mode-hook #'visual-line-mode)
+  (add-hook 'vc-dir-mode-hook #'visual-line-mode)
+#+end_src
 * Evil                                                              :ARCHIVE:
     Define Evil global keybindings and initialize the mode.
     #+BEGIN_SRC emacs-lisp
