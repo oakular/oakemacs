@@ -240,7 +240,7 @@ The backbone of support for software development
     :config
     (add-hook 'web-mode-hook #'hl-line-mode))
 
-  (add-to-list 'auto-mode-alist  '("\\.css\\'" 'web-mode))
+  (add-to-list 'auto-mode-alist  '("\\.css\\'" . web-mode))
 #+end_src
 ** Compilation
 #+begin_src emacs-lisp
@@ -331,7 +331,7 @@ The backbone of support for software development
   (use-package csv-mode
     :pin gnu
     :config
-    (add-to-list 'auto-mode-alist "\\.csv\\'" 'csv-mode))
+    (add-to-list 'auto-mode-alist '("\\.csv\\'" . csv-mode)))
 #+end_src
 ** Javascript
 #+begin_src emacs-lisp
@@ -343,7 +343,7 @@ The backbone of support for software development
 **** VueJS
  #+begin_src emacs-lisp
      (define-derived-mode vue-web-mode web-mode "Vue Web Mode")
-     (add-to-list 'auto-mode-alist "\\.vue\\'" 'vue-web-mode)
+     (add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-web-mode))
      (setq vue-web-mode-script-padding 0)
      (add-hook 'vue-web-mode-hook 'eglot-ensure)
  #+end_src
