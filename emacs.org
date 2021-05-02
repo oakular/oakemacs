@@ -422,6 +422,37 @@ Org agenda configuration.
 
     (oak/define-global-keymap '("C-c oa" . org-agenda))
   #+END_SRC
+
+  Custom org functions
+  #+begin_src emacs-lisp
+    (defun oak/org-find-file ()
+      "Find a file within the org-directory"
+      (interactive)
+      (let ((default-directory org-directory))
+        (find-file (read-file-name "Find org file: "))))
+
+    (defun oak/org-agenda-file-name-to-pair (filename)
+      "Get the multple choice pairing for the filename passed as parameter."
+      (list (aref (file-name-nondirectory filename) 0) (file-name-nondirectory filename)))
+
+    (defun oak/org-get-agenda-file-choice ()
+      "Get the choices of agenda files."
+      (mapcar 'oak/org-agenda-file-name-to-pair org-agenda-files))
+
+    (defun oak/org-find-agenda-file (filename)
+      "Find the agenda file passed as parameter."
+      (find-file (expand-file-name filename org-directory)))
+
+    (defun oak/org-choose-agenda-file ()
+      "Choose an agenda file to visit."
+      (interactive)
+      (let ((default-directory org-directory))
+        (oak/org-find-agenda-file (nth 1 (read-multiple-choice "Agenda file:"
+                                                             (oak/org-get-agenda-file-choice))))))
+
+    (oak/define-global-keymap '("C-c of" . oak/org-find-file))
+    (oak/define-global-keymap '("C-c oF" . oak/org-choose-agenda-file))
+  #+end_src
 * Email
 #+begin_src emacs-lisp
   (use-package gnus
