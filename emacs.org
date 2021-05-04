@@ -119,6 +119,10 @@
          (let ((map global-map))
            (define-key map (kbd (car keymap)) (cdr keymap))))
 
+  (defun oak/define-mode-keymap (mode keymap)
+    "Define a keymap in the scope of the provided mode."
+    (define-key mode (kbd (car keymap)) (cdr keymap)))
+
   (defun oak/define-global-keymaps (keymaps) "Define a set of keymaps of global scope."
          (dolist (keymap keymaps) (oak/define-global-keymap keymap) nil))
 
@@ -143,10 +147,15 @@ screen real estate.
             (slot . 0))
             ("\\*\\(compilation\\|vc-git :\\).*"
              (display-buffer-in-side-window)
-             (window-height . 0.15)
+             (window-height . 0.20)
              (side . bottom)
              (slot . -1)
              (window-parameters . ((no-other-window . t))))
+            ("\\*xref.*"
+             (display-buffer-in-side-window)
+             (window-height . 0.33)
+             (side . bottom)
+             (slot . 1))
             ("\\*.*\\(e?shell\\|v?term\\|ansi-term\\).*"
              (display-buffer-reuse-mode-window display-buffer-at-bottom)
              (window-height . 0.2))
@@ -259,7 +268,10 @@ Use the elisp =ls= implementation.
 ** Eglot
 The backbone of support for software development
 #+begin_src emacs-lisp
-  (use-package eglot :pin melpa)
+  (use-package eglot
+    :pin melpa
+    :config
+    (setq eglot-confirm-server-initiated-edits nil))
 #+end_src
 ** Web Mode
 #+begin_src emacs-lisp
@@ -277,18 +289,24 @@ The backbone of support for software development
 #+end_src
 ** C#
   #+BEGIN_SRC emacs-lisp
-    (use-package csharp-mode
-      :ensure t
-      :mode "\\.cs\\'"
-      :after eglot
-      :config
-      (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
-      (setq display-line-numbers 'relative)
-      (add-hook 'csharp-mode-hook #'hl-line-mode)
-      (let ((omnisharp-path (if WINDOWS
-                                "~/bin/omnisharp/OmniSharp.exe"
-                              "~/bin/omnisharp/run")))
-        (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp")))))
+      (use-package csharp-mode
+        :ensure t
+        :mode "\\.cs\\'"
+        :after eglot
+        :config
+        (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
+        (add-hook 'csharp-mode-hook #'hl-line-mode)
+
+        (oak/define-mode-keymap csharp-mode-map '("C-. a" . eglot-code-actions))
+        (oak/define-mode-keymap csharp-mode-map '("C-. gi" . eglot-find-implementations))
+        (oak/define-mode-keymap csharp-mode-map '("C-. gd" . xref-find-definitions))
+        (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references))
+        (oak/define-mode-keymap csharp-mode-map '("C-. r" . eglot-rename))
+
+        (let ((omnisharp-path (if WINDOWS
+                                  "~/bin/omnisharp/OmniSharp.exe"
+                                "~/bin/omnisharp/run")))
+          (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp")))))
   #+END_SRC
 
   Define functions for migrations.
