@@ -90,8 +90,8 @@
 #+BEGIN_SRC emacs-lisp
   (defun oak/setup-fonts () "Setup basic font configuration."
          (set-face-attribute 'default nil :height 80)
-         (set-face-attribute 'default nil :width 'condensed)
-         (set-face-attribute 'default nil :family "Cascadia Mono"))
+         (set-face-attribute 'default nil :width 'ultra-condensed)
+         (set-face-attribute 'default nil :family (when WINDOWS "Cascadia Mono" "Hack")))
 
   (use-package modus-themes
     :ensure t
@@ -133,6 +133,24 @@
            (oak/define-global-keymaps keymaps)))
 
   (oak/global-keymaps)
+#+end_src
+* Completion
+#+begin_src emacs-lisp
+  (use-package icomplete-vertical
+    :demand t
+    :custom
+    (completion-category-overrides '((file (styles basic substring))))
+    (read-file-name-completion-ignore-case t)
+    (read-buffer-completion-ignore-case t)
+    (completion-ignore-case t)
+    :config
+    (fido-mode)
+    (icomplete-vertical-mode)
+    :bind (:map icomplete-minibuffer-map
+                ("<down>" . icomplete-forward-completions)
+                ("C-n" . icomplete-forward-completions)
+                ("<up>" . icomplete-backward-completions)
+                ("C-p" . icomplete-backward-completions)))
 #+end_src
 * Window Management
 We define some rules about how certain buffers should appear.  This is
@@ -309,8 +327,9 @@ The backbone of support for software development
           (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp")))))
   #+END_SRC
 
-  Define functions for migrations.
+Define functions for migrations.
   #+begin_src emacs-lisp
+    (defconst dotnet-command "dotnet")
     (defvar oak-dotnet-migration-project nil
       "The project directory (relative or absolute) containing project migrations.")
 
@@ -336,17 +355,25 @@ The backbone of support for software development
 
     (defun oak/dotnet-migration-remove (project &optional context)
       "Remove the latest migration from the given project"
-          (oak/shell-command-project-root
-           (oak/build-shell-cmd
-            (list "dotnet" "ef" "migrations" "remove"
-                  "-p" project
-                  (when context (concat "-c" " " context))))))
+      (oak/shell-command-project-root
+       (oak/build-shell-cmd
+        (list "dotnet" "ef" "migrations" "remove"
+              "-p" project
+              (when context (concat "-c" " " context))))))
 
     (defun oak/dotnet-update-database (project &optional context)
       "Update the database for the given project and context"
       (oak/shell-command-project-root
        (oak/build-shell-cmd
         (list "dotnet" "ef" "database" "update"
+              "-p" project 
+              (when context (concat "-c" " " context))))))
+
+    (defun oak/dotnet-drop-database (project &optional context)
+      "Drop the database for the given project and context"
+      (oak/shell-command-project-root
+       (oak/build-shell-cmd
+        (list "dotnet" "ef" "database" "drop"
               "-p" project 
               (when context (concat "-c" " " context))))))
 
@@ -365,13 +392,56 @@ The backbone of support for software development
        (oak/dotnet-migration-remove (oak/dotnet-get-migration-project)
                                     (oak/dotnet-get-context-name))))
 
+
     (defun oak/do-dotnet-update-database ()
       "Interactively update the database"
       (interactive)
       (oak/exec-fun-project-root
        (oak/dotnet-update-database (oak/dotnet-get-migration-project)
                                    (oak/dotnet-get-context-name))))
+
+    (defun oak/do-dotnet-drop-database ()
+      "Interactively update the database"
+      (interactive)
+      (oak/exec-fun-project-root
+       (oak/dotnet-drop-database (oak/dotnet-get-migration-project)
+                                 (oak/dotnet-get-context-name))))
   #+end_src
+
+Define functions for package handling
+#+begin_src emacs-lisp
+  (defun oak/dotnet-add-package (project package-name)
+    "Add the given package to the given project."
+    (oak/shell-command-project-root
+     (oak/build-shell-cmd
+      (list dotnet-command "add"
+            project
+            "package"
+            package-name))))
+
+  (defun oak/dotnet-remove-package (project package-name)
+    "Remove the given package from the given project."
+    (oak/shell-command-project-root
+     (oak/build-shell-cmd
+      (list dotnet-command "remove"
+            project
+            "package"
+            package-name))))
+
+  (defun oak/do-dotnet-add-package ()
+        "Add a package to a project."
+        (interactive)
+        (oak/exec-fun-project-root
+         (oak/dotnet-add-package (read-directory-name "Project: ")
+                                 (read-string "Package: "))))
+
+  (defun oak/do-dotnet-remove-package ()
+        "Remove a package from a project."
+        (interactive)
+        (oak/exec-fun-project-root
+         (oak/dotnet-remove-package (read-directory-name "Project: ")
+                                   (read-string "Package: "))))
+#+end_src
 ** Csv
 #+begin_src emacs-lisp
   (use-package csv-mode
