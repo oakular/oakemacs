@@ -89,7 +89,7 @@
 * Theme
 #+BEGIN_SRC emacs-lisp
   (defun oak/setup-fonts () "Setup basic font configuration."
-         (set-face-attribute 'default nil :height 90)
+         (set-face-attribute 'default nil :height 80)
          (set-face-attribute 'default nil :width 'condensed)
          (set-face-attribute 'default nil :family "Cascadia Mono"))
 
@@ -298,7 +298,7 @@ The backbone of support for software development
         (add-hook 'csharp-mode-hook #'hl-line-mode)
 
         (oak/define-mode-keymap csharp-mode-map '("C-. a" . eglot-code-actions))
-        (oak/define-mode-keymap csharp-mode-map '("C-. gi" . eglot-find-implementations))
+        (oak/define-mode-keymap csharp-mode-map '("C-. gi" . eglot-find-implementation))
         (oak/define-mode-keymap csharp-mode-map '("C-. gd" . xref-find-definitions))
         (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references))
         (oak/define-mode-keymap csharp-mode-map '("C-. r" . eglot-rename))
