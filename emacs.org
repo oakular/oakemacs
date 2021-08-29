@@ -72,7 +72,7 @@
       (require 'package)
 
       (unless (assoc-default "melpa" package-archives)
-        (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t))
+        (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
       (unless (assoc-default "org" package-archives)
         (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t))
 
@@ -157,30 +157,32 @@ We define some rules about how certain buffers should appear.  This is
 mainly to prevent informative buffers from taking up unnecessary
 screen real estate.
 #+begin_src emacs-lisp
-    (setq display-buffer-alist
-          `(("\\*Help.*"
-            (display-buffer-in-side-window)
-            (window-width . 0.3)
-            (side . right)
-            (slot . 0))
-            ("\\*\\(compilation\\|vc-git :\\).*"
-             (display-buffer-in-side-window)
-             (window-height . 0.20)
-             (side . bottom)
-             (slot . -1)
-             (window-parameters . ((no-other-window . t))))
-            ("\\*xref.*"
-             (display-buffer-in-side-window)
-             (window-height . 0.33)
-             (side . bottom)
-             (slot . 1))
-            ("\\*.*\\(e?shell\\|v?term\\|ansi-term\\).*"
-             (display-buffer-reuse-mode-window display-buffer-at-bottom)
-             (window-height . 0.2))
-            ("^\\(magit:\\|*vc-dir\\).*"
-             (display-buffer-in-side-window)
-             (side . right)
-             (window-width . 0.40))))
+  (oak/define-global-keymap '("C-x 4 t" . window-toggle-side-windows))
+
+  (setq display-buffer-alist
+        `(("\\*Help.*"
+           (display-buffer-in-side-window)
+           (window-width . 0.3)
+           (side . right)
+           (slot . 0))
+          ("\\*\\(compilation\\|vc-git :\\).*"
+           (display-buffer-in-side-window)
+           (window-height . 0.20)
+           (side . bottom)
+           (slot . -1)
+           (window-parameters . ((no-other-window . t))))
+          ("\\*xref.*"
+           (display-buffer-in-side-window)
+           (window-height . 0.33)
+           (side . bottom)
+           (slot . 1))
+          ("\\*.*\\(e?shell\\|v?term\\|ansi-term\\).*"
+           (display-buffer-reuse-mode-window display-buffer-at-bottom)
+           (window-height . 0.2))
+          ("^\\(magit:\\|*vc-dir\\).*"
+           (display-buffer-in-side-window)
+           (side . right)
+           (window-width . 0.40))))
 
   (add-hook 'help-mode-hook #'visual-line-mode)
   (add-hook 'vc-dir-mode-hook #'visual-line-mode)
@@ -283,11 +285,20 @@ Use the elisp =ls= implementation.
     (oak/project))
 #+end_src
 * Software Development
+** Database
+#+BEGIN_SRC emacs-lisp
+    (setq sql-postgres-login-params
+          '((user :default "quetzalcoatl")
+            (server :default "nsbstagedb.postgres.database.azure.com")
+            (database :default "")))
+        
+#+END_SRC
 ** Eglot
 The backbone of support for software development
 #+begin_src emacs-lisp
   (use-package eglot
     :pin melpa
+    :after csharp-mode
     :config
     (setq eglot-confirm-server-initiated-edits nil))
 #+end_src
@@ -325,7 +336,6 @@ The backbone of support for software development
       (use-package csharp-mode
         :ensure t
         :mode "\\.cs\\'"
-        :after eglot
         :config
         (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
         (add-hook 'csharp-mode-hook #'hl-line-mode)
@@ -478,6 +488,11 @@ Define functions for package handling
      (setq vue-web-mode-script-padding 0)
      (add-hook 'vue-web-mode-hook 'eglot-ensure)
  #+end_src
+** YAML
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+    :mode "\\.yml\\'")
+#+END_SRC
 * Ebooks
 #+begin_src emacs-lisp
   (use-package nov
@@ -635,12 +650,4 @@ Org agenda configuration.
           ("2" "Q2" tags-todo "+important-urgent")
           ("3" "Q3" tags-todo "-important+urgent")
           ("4" "Q4" tags-todo "-important-urgent")))
-#+END_SRC
-* Database
-#+BEGIN_SRC emacs-lisp
-    (setq sql-postgres-login-params
-          '((user :default "quetzalcoatl")
-            (server :default "nsbstagedb.postgres.database.azure.com")
-            (database :default "")))
-        
 #+END_SRC
