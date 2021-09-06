@@ -510,6 +510,10 @@ Sane org defaults
     (use-package org
       :pin org)
 
+    (use-package org-sticky-header
+      :after org
+      :hook (org-mode . org-sticky-header-mode))
+
     (setq org-directory "~/dropbox/org/")
     (setq org-archive-location (concat org-directory "archive/%s_archive::"))
     (setq org-startup-with-latex-preview t)
