@@ -242,8 +242,8 @@ screen real estate.
          (setq dired-listing-switches "-lah"))
 
   (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+  (add-hook 'dired-mode-hook #'gnus-dired-mode)
   (oak/dired-detailed)
-
 #+end_src
 
 Use the elisp =ls= implementation.
