@@ -543,6 +543,7 @@ Org agenda configuration.
     (setq org-agenda-follow-indirect t)
 
     (oak/define-global-keymap '("C-c oa" . org-agenda))
+    (oak/define-global-keymap '("C-c c" . org-capture))
   #+END_SRC
 
   Custom org functions
@@ -590,6 +591,7 @@ Org agenda configuration.
 #+begin_src emacs-lisp
   (use-package gnus
     :config
+    :hook (gnus-mode . gnus-topic-mode)
     (setq gnus-select-method
           '(nnimap "Email"
                (nnimap-address "outlook.office365.com")
@@ -599,7 +601,7 @@ Org agenda configuration.
                (send-mail-function 'smtpmail-send-it)
                (smtpmail-smtp-server "smtp.office365.com")
                (smtpmail-smtp-type 'starttls)
-               (smtpmail-smtp-service 587)))
+               (smtpmail-smtp-service 587))))
 
     (setq message-send-mail-function 'smtpmail-send-it)
     (setq gnus-group-line-format "%g: %y%m\n"
