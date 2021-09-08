@@ -129,7 +129,8 @@
   (defun oak/global-keymaps () "Enables all global keymaps."
          (let ((keymaps '(("C-x cr" . oak/reload-config)
                           ("C-x ctd" . oak/load-dark-theme)
-                          ("C-x ctl" . oak/load-light-theme))))
+                          ("C-x ctl" . oak/load-light-theme)
+                          ("C-x g" . gnus))))
            (oak/define-global-keymaps keymaps)))
 
   (oak/global-keymaps)
@@ -590,24 +591,24 @@ Org agenda configuration.
 * Email
 #+begin_src emacs-lisp
   (use-package gnus
-    :config
     :hook (gnus-mode . gnus-topic-mode)
+    :config
     (setq gnus-select-method
           '(nnimap "Email"
-               (nnimap-address "outlook.office365.com")
-               (nnimap-server-port 993)
-               (nnimap-stream ssl)
-               (nnimap-authinfo-file "~/.authinfo")
-               (send-mail-function 'smtpmail-send-it)
-               (smtpmail-smtp-server "smtp.office365.com")
-               (smtpmail-smtp-type 'starttls)
-               (smtpmail-smtp-service 587))))
+                   (nnimap-address "outlook.office365.com")
+                   (nnimap-server-port 993)
+                   (nnimap-stream ssl)
+                   (nnimap-authinfo-file "~/.authinfo")
+                   (send-mail-function 'smtpmail-send-it)
+                   (smtpmail-smtp-server "smtp.office365.com")
+                   (smtpmail-smtp-type 'starttls)
+                   (smtpmail-smtp-service 587)))
 
     (setq message-send-mail-function 'smtpmail-send-it)
-    (setq gnus-group-line-format "%g: %y%m\n"
-          gnus-summary-line-format "%U%R%B %d - %f: %s\n"))
+    (setq gnus-group-line-format "%P%g: %y%m\n"
+          gnus-summary-line-format "%U%R%B %d - %f: %s\n")
 
-  (setq gnus-thread-sort-functions 'gnus-thread-sort-by-most-recent-date)
+    (setq gnus-thread-sort-functions 'gnus-thread-sort-by-most-recent-date))
 #+end_src
 * Shell
 #+begin_src emacs-lisp
