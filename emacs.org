@@ -115,25 +115,26 @@
 #+END_SRC
 * Global Keys
 #+begin_src emacs-lisp
-  (defun oak/define-global-keymap (keymap) "Define a keymap of global scope."
-         (let ((map global-map))
-           (define-key map (kbd (car keymap)) (cdr keymap))))
+    (defun oak/define-global-keymap (keymap) "Define a keymap of global scope."
+           (let ((map global-map))
+             (define-key map (kbd (car keymap)) (cdr keymap))))
 
-  (defun oak/define-mode-keymap (mode keymap)
-    "Define a keymap in the scope of the provided mode."
-    (define-key mode (kbd (car keymap)) (cdr keymap)))
+    (defun oak/define-mode-keymap (mode keymap)
+      "Define a keymap in the scope of the provided mode."
+      (define-key mode (kbd (car keymap)) (cdr keymap)))
 
-  (defun oak/define-global-keymaps (keymaps) "Define a set of keymaps of global scope."
-         (dolist (keymap keymaps) (oak/define-global-keymap keymap) nil))
+    (defun oak/define-global-keymaps (keymaps) "Define a set of keymaps of global scope."
+           (dolist (keymap keymaps) (oak/define-global-keymap keymap) nil))
 
-  (defun oak/global-keymaps () "Enables all global keymaps."
-         (let ((keymaps '(("C-x cr" . oak/reload-config)
-                          ("C-x ctd" . oak/load-dark-theme)
-                          ("C-x ctl" . oak/load-light-theme)
-                          ("C-x g" . gnus))))
-           (oak/define-global-keymaps keymaps)))
+    (defun oak/global-keymaps () "Enables all global keymaps."
+           (let ((keymaps '(("C-x cr" . oak/reload-config)
+                            ("C-x ctd" . oak/load-dark-theme)
+                            ("C-x ctl" . oak/load-light-theme)
+                            ("C-x g" . gnus)
+                            ("s-w" . eww))))
+             (oak/define-global-keymaps keymaps)))
 
-  (oak/global-keymaps)
+    (oak/global-keymaps)
 #+end_src
 * Completion
 #+begin_src emacs-lisp
@@ -299,9 +300,14 @@ The backbone of support for software development
 #+begin_src emacs-lisp
   (use-package eglot
     :pin melpa
-    :after csharp-mode
+    :ensure t
     :config
-    (setq eglot-confirm-server-initiated-edits nil))
+    (setq eglot-confirm-server-initiated-edits nil)
+  
+    (let ((omnisharp-path (if WINDOWS
+                                "~/bin/omnisharp/OmniSharp.exe"
+                              "~/bin/omnisharp/run")))
+        (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp")))))
 #+end_src
 ** REST Client
 #+begin_src emacs-lisp
@@ -337,6 +343,7 @@ The backbone of support for software development
       (use-package csharp-mode
         :ensure t
         :mode "\\.cs\\'"
+        :hook (csharp-mode . eglot-ensure)
         :config
         (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
         (add-hook 'csharp-mode-hook #'hl-line-mode)
@@ -347,10 +354,7 @@ The backbone of support for software development
         (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references))
         (oak/define-mode-keymap csharp-mode-map '("C-. r" . eglot-rename))
 
-        (let ((omnisharp-path (if WINDOWS
-                                  "~/bin/omnisharp/OmniSharp.exe"
-                                "~/bin/omnisharp/run")))
-          (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp")))))
+        )
   #+END_SRC
 
 Define functions for migrations.
@@ -658,3 +662,7 @@ Org agenda configuration.
   (oak/define-global-keymap '("C-x !s" . oak/suspend))
   (oak/define-global-keymap '("C-x !tk" . oak/tokindle))
 #+end_src
+* Web browsing
+#+BEGIN_SRC emacs-lisp
+(setq eww-header-line-format "%u - %t")
+#+END_SRC
