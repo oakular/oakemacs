@@ -72,7 +72,7 @@
       (require 'package)
 
       (unless (assoc-default "melpa" package-archives)
-        (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t))
+        (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
       (unless (assoc-default "org" package-archives)
         (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t))
 
@@ -115,24 +115,26 @@
 #+END_SRC
 * Global Keys
 #+begin_src emacs-lisp
-  (defun oak/define-global-keymap (keymap) "Define a keymap of global scope."
-         (let ((map global-map))
-           (define-key map (kbd (car keymap)) (cdr keymap))))
+    (defun oak/define-global-keymap (keymap) "Define a keymap of global scope."
+           (let ((map global-map))
+             (define-key map (kbd (car keymap)) (cdr keymap))))
 
-  (defun oak/define-mode-keymap (mode keymap)
-    "Define a keymap in the scope of the provided mode."
-    (define-key mode (kbd (car keymap)) (cdr keymap)))
+    (defun oak/define-mode-keymap (mode keymap)
+      "Define a keymap in the scope of the provided mode."
+      (define-key mode (kbd (car keymap)) (cdr keymap)))
 
-  (defun oak/define-global-keymaps (keymaps) "Define a set of keymaps of global scope."
-         (dolist (keymap keymaps) (oak/define-global-keymap keymap) nil))
+    (defun oak/define-global-keymaps (keymaps) "Define a set of keymaps of global scope."
+           (dolist (keymap keymaps) (oak/define-global-keymap keymap) nil))
 
-  (defun oak/global-keymaps () "Enables all global keymaps."
-         (let ((keymaps '(("C-x cr" . oak/reload-config)
-                          ("C-x ctd" . oak/load-dark-theme)
-                          ("C-x ctl" . oak/load-light-theme))))
-           (oak/define-global-keymaps keymaps)))
+    (defun oak/global-keymaps () "Enables all global keymaps."
+           (let ((keymaps '(("C-x cr" . oak/reload-config)
+                            ("C-x ctd" . oak/load-dark-theme)
+                            ("C-x ctl" . oak/load-light-theme)
+                            ("C-x g" . gnus)
+                            ("s-w" . eww))))
+             (oak/define-global-keymaps keymaps)))
 
-  (oak/global-keymaps)
+    (oak/global-keymaps)
 #+end_src
 * Completion
 #+begin_src emacs-lisp
@@ -157,30 +159,32 @@ We define some rules about how certain buffers should appear.  This is
 mainly to prevent informative buffers from taking up unnecessary
 screen real estate.
 #+begin_src emacs-lisp
-    (setq display-buffer-alist
-          `(("\\*Help.*"
-            (display-buffer-in-side-window)
-            (window-width . 0.3)
-            (side . right)
-            (slot . 0))
-            ("\\*\\(compilation\\|vc-git :\\).*"
-             (display-buffer-in-side-window)
-             (window-height . 0.20)
-             (side . bottom)
-             (slot . -1)
-             (window-parameters . ((no-other-window . t))))
-            ("\\*xref.*"
-             (display-buffer-in-side-window)
-             (window-height . 0.33)
-             (side . bottom)
-             (slot . 1))
-            ("\\*.*\\(e?shell\\|v?term\\|ansi-term\\).*"
-             (display-buffer-reuse-mode-window display-buffer-at-bottom)
-             (window-height . 0.2))
-            ("^\\(magit:\\|*vc-dir\\).*"
-             (display-buffer-in-side-window)
-             (side . right)
-             (window-width . 0.40))))
+  (oak/define-global-keymap '("C-x 4 t" . window-toggle-side-windows))
+
+  (setq display-buffer-alist
+        `(("\\*Help.*"
+           (display-buffer-in-side-window)
+           (window-width . 0.3)
+           (side . right)
+           (slot . 0))
+          ("\\*\\(compilation\\|vc-git :\\).*"
+           (display-buffer-in-side-window)
+           (window-height . 0.20)
+           (side . bottom)
+           (slot . -1)
+           (window-parameters . ((no-other-window . t))))
+          ("\\*xref.*"
+           (display-buffer-in-side-window)
+           (window-height . 0.33)
+           (side . bottom)
+           (slot . 1))
+          ("\\*.*\\(e?shell\\|v?term\\|ansi-term\\).*"
+           (display-buffer-reuse-mode-window display-buffer-at-bottom)
+           (window-height . 0.2))
+          ("^\\(magit:\\|*vc-dir\\).*"
+           (display-buffer-in-side-window)
+           (side . right)
+           (window-width . 0.40))))
 
   (add-hook 'help-mode-hook #'visual-line-mode)
   (add-hook 'vc-dir-mode-hook #'visual-line-mode)
@@ -240,8 +244,8 @@ screen real estate.
          (setq dired-listing-switches "-lah"))
 
   (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+  (add-hook 'dired-mode-hook #'gnus-dired-mode)
   (oak/dired-detailed)
-
 #+end_src
 
 Use the elisp =ls= implementation.
@@ -284,13 +288,37 @@ Use the elisp =ls= implementation.
     (oak/project))
 #+end_src
 * Software Development
+** Database
+#+BEGIN_SRC emacs-lisp
+    (setq sql-postgres-login-params
+          '((user :default "quetzalcoatl")
+            (server :default "nsbstagedb.postgres.database.azure.com")
+            (database :default "")))
+        
+#+END_SRC
 ** Eglot
 The backbone of support for software development
 #+begin_src emacs-lisp
   (use-package eglot
     :pin melpa
+    :ensure t
     :config
-    (setq eglot-confirm-server-initiated-edits nil))
+    (setq eglot-confirm-server-initiated-edits nil)
+  
+    (let ((omnisharp-path (if WINDOWS
+                                "~/bin/omnisharp/OmniSharp.exe"
+                              "~/bin/omnisharp/run")))
+        (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp")))))
+#+end_src
+** REST Client
+#+begin_src emacs-lisp
+(use-package restclient)
+#+end_src
+** Markdown
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :mode "\\.md\\'"
+    )
 #+end_src
 ** Web Mode
 #+begin_src emacs-lisp
@@ -300,10 +328,15 @@ The backbone of support for software development
     (add-hook 'web-mode-hook #'hl-line-mode))
 
   (add-to-list 'auto-mode-alist  '("\\.css\\'" . web-mode))
+
+  (use-package sass-mode
+    :mode "\\.sass\\'"
+    :config
+    (add-hook 'sass-mode-hook #'hl-line-mode))
 #+end_src
 ** Compilation
 #+begin_src emacs-lisp
-  (setq compilation-window-height 10)
+  (setq compilation-window-height 20)
   (setq compilation-scroll-output t)
 #+end_src
 ** C#
@@ -311,7 +344,7 @@ The backbone of support for software development
       (use-package csharp-mode
         :ensure t
         :mode "\\.cs\\'"
-        :after eglot
+        :hook (csharp-mode . eglot-ensure)
         :config
         (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
         (add-hook 'csharp-mode-hook #'hl-line-mode)
@@ -322,10 +355,7 @@ The backbone of support for software development
         (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references))
         (oak/define-mode-keymap csharp-mode-map '("C-. r" . eglot-rename))
 
-        (let ((omnisharp-path (if WINDOWS
-                                  "~/bin/omnisharp/OmniSharp.exe"
-                                "~/bin/omnisharp/run")))
-          (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp")))))
+        )
   #+END_SRC
 
 Define functions for migrations.
@@ -464,6 +494,11 @@ Define functions for package handling
      (setq vue-web-mode-script-padding 0)
      (add-hook 'vue-web-mode-hook 'eglot-ensure)
  #+end_src
+** YAML
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+    :mode "\\.yml\\'")
+#+END_SRC
 * Ebooks
 #+begin_src emacs-lisp
   (use-package nov
@@ -480,6 +515,10 @@ Sane org defaults
   #+BEGIN_SRC emacs-lisp
     (use-package org
       :pin org)
+
+    (use-package org-sticky-header
+      :after org
+      :hook (org-mode . org-sticky-header-mode))
 
     (setq org-directory "~/dropbox/org/")
     (setq org-archive-location (concat org-directory "archive/%s_archive::"))
@@ -510,6 +549,7 @@ Org agenda configuration.
     (setq org-agenda-follow-indirect t)
 
     (oak/define-global-keymap '("C-c oa" . org-agenda))
+    (oak/define-global-keymap '("C-c c" . org-capture))
   #+END_SRC
 
   Custom org functions
@@ -542,26 +582,38 @@ Org agenda configuration.
     (oak/define-global-keymap '("C-c of" . oak/org-find-file))
     (oak/define-global-keymap '("C-c oF" . oak/org-choose-agenda-file))
   #+end_src
+** Eisenhower
+#+BEGIN_SRC emacs-lisp
+  (setq org-tag-alist '(("important" . ?i)
+                        ("urgent"    . ?u)))
+
+  (setq org-agenda-custom-commands
+        '(("1" "Q1" tags-todo "+important+urgent")
+          ("2" "Q2" tags-todo "+important-urgent")
+          ("3" "Q3" tags-todo "-important+urgent")
+          ("4" "Q4" tags-todo "-important-urgent")))
+#+END_SRC
 * Email
 #+begin_src emacs-lisp
   (use-package gnus
+    :hook (gnus-mode . gnus-topic-mode)
     :config
     (setq gnus-select-method
           '(nnimap "Email"
-               (nnimap-address "outlook.office365.com")
-               (nnimap-server-port 993)
-               (nnimap-stream ssl)
-               (nnimap-authinfo-file "~/.authinfo")
-               (send-mail-function 'smtpmail-send-it)
-               (smtpmail-smtp-server "smtp.office365.com")
-               (smtpmail-smtp-type 'starttls)
-               (smtpmail-smtp-service 587)))
+                   (nnimap-address "outlook.office365.com")
+                   (nnimap-server-port 993)
+                   (nnimap-stream ssl)
+                   (nnimap-authinfo-file "~/.authinfo")
+                   (send-mail-function 'smtpmail-send-it)
+                   (smtpmail-smtp-server "smtp.office365.com")
+                   (smtpmail-smtp-type 'starttls)
+                   (smtpmail-smtp-service 587)))
 
     (setq message-send-mail-function 'smtpmail-send-it)
-    (setq gnus-group-line-format "%g: %y%m\n"
-          gnus-summary-line-format "%U%R%B %d - %f: %s\n"))
+    (setq gnus-group-line-format "%P%g: %y%m\n"
+          gnus-summary-line-format "%U%R%B %d - %f: %s\n")
 
-  (setq gnus-thread-sort-functions 'gnus-thread-sort-by-most-recent-date)
+    (setq gnus-thread-sort-functions 'gnus-thread-sort-by-most-recent-date))
 #+end_src
 * Shell
 #+begin_src emacs-lisp
@@ -611,3 +663,7 @@ Org agenda configuration.
   (oak/define-global-keymap '("C-x !s" . oak/suspend))
   (oak/define-global-keymap '("C-x !tk" . oak/tokindle))
 #+end_src
+* Web browsing
+#+BEGIN_SRC emacs-lisp
+(setq eww-header-line-format "%u - %t")
+#+END_SRC
