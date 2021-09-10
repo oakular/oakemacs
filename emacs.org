@@ -473,6 +473,20 @@ Define functions for package handling
          (oak/dotnet-remove-package (read-directory-name "Project: ")
                                    (read-string "Package: "))))
 #+end_src
+
+Define functions for cleaning projects
+#+BEGIN_SRC emacs-lisp
+    (defun oak/dotnet-clean-project ()
+      "Clean the current project."
+      (oak/shell-command-project-root
+       (oak/build-shell-cmd
+        (list dotnet-command "clean"))))
+
+    (defun oak/do-dotnet-clean-project ()
+      "Clean the current project."
+      (interactive)
+      (oak/dotnet-clean-project))
+#+END_SRC
 ** Csv
 #+begin_src emacs-lisp
   (use-package csv-mode
@@ -550,6 +564,7 @@ Org agenda configuration.
 
     (oak/define-global-keymap '("C-c oa" . org-agenda))
     (oak/define-global-keymap '("C-c c" . org-capture))
+
   #+END_SRC
 
   Custom org functions
@@ -579,8 +594,14 @@ Org agenda configuration.
         (oak/org-find-agenda-file (nth 1 (read-multiple-choice "Agenda file:"
                                                              (oak/org-get-agenda-file-choice))))))
 
+    (defun oak/org-sync ()
+      "Sync org directory with cloud storage."
+      (interactive)
+      (shell-command (if (not WINDOWS) "orgsync" "rclone sync C:\\Users\\VNA2\\org oakularorg:org")))
+
     (oak/define-global-keymap '("C-c of" . oak/org-find-file))
     (oak/define-global-keymap '("C-c oF" . oak/org-choose-agenda-file))
+    (oak/define-global-keymap '("C-c os" . oak/org-sync))
   #+end_src
 ** Eisenhower
 #+BEGIN_SRC emacs-lisp
