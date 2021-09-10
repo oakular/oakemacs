@@ -255,15 +255,16 @@ Use the elisp =ls= implementation.
 #+end_src
 * Version Control
 #+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :ensure t
-    :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
-    :init
-    (oak/define-global-keymap '("C-x vcm" . magit-status)))
+    (use-package magit
+      :ensure t
+      :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
+      :init
+      (oak/define-global-keymap '("C-x vcm" . magit-status))
+      (oak/define-global-keymap '("C-x vb" . magit-blame)))
 
-  (use-package vc
-    :pin gnu
-    :commands (vc-dir vc-log-outgoing vc-log-incoming vc-annotate))
+    (use-package vc
+      :pin gnu
+      :commands (vc-dir vc-log-outgoing vc-log-incoming vc-annotate))
 
 #+END_SRC
 * Project Management
