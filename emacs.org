@@ -519,7 +519,7 @@ Sane org defaults
       :after org
       :hook (org-mode . org-sticky-header-mode))
 
-    (setq org-directory "~/dropbox/org/")
+    (setq org-directory "~/org/org/")
     (setq org-archive-location (concat org-directory "archive/%s_archive::"))
     (setq org-startup-with-latex-preview t)
     (setq org-startup-indented t)
@@ -665,4 +665,16 @@ Org agenda configuration.
 * Web browsing
 #+BEGIN_SRC emacs-lisp
 (setq eww-header-line-format "%u - %t")
+#+END_SRC
+* Media
+** Podcast/Video Downloads
+#+BEGIN_SRC emacs-lisp
+  (defun oak/download-from-url-at-point () "Downloads the media at the URL at point."
+         (interactive)
+         (start-process
+          "*download*"
+          "*download*"
+          "youtube-dl"
+          "-o $HOME/Videos/yt/%(uploader)s/%(title)s.%(ext)s"
+          (shr-url-at-point nil)))
 #+END_SRC
