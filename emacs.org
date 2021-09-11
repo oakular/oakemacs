@@ -58,6 +58,7 @@
             package-enable-at-startup nil)
 
       (setq oak-lisp-path (expand-file-name (concat user-emacs-directory "lisp")))
+      (add-to-list 'load-path oak-lisp-path)
 
       (unless (file-directory-p package-user-dir)
         (make-directory package-user-dir t)))
@@ -65,10 +66,9 @@
     (defun oak/instantiate-load-path ()
       "Add all subdirectories of package-user-dir to the load-path"
       (let ((default-directory package-user-dir))
-        (normal-top-level-add-subdirs-to-load-path))
-      (add-to-list 'load-path oak-lisp-path))
+        (normal-top-level-add-subdirs-to-load-path)))
 
-    (oak/instantiate-load-path)
+
   #+END_SRC
 
   Install [[https://github.com/jwiegley/use-package][use-package]]
@@ -252,7 +252,7 @@ screen real estate.
          (setq dired-listing-switches "-lah"))
 
   (add-hook 'dired-mode-hook #'dired-hide-details-mode)
-  (add-hook 'dired-mode-hook #'gnus-dired-mode)
+  (add-hook 'dired-mode-hook #'turn-on-gnus-dired-mode)
   (oak/dired-detailed)
 #+end_src
 
