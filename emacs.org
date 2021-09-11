@@ -103,6 +103,9 @@
     :demand
     :pin gnu
     :config
+    (setq modus-themes-paren-match 'subtle-bold)
+    (setq modus-themes-mode-line '3d)
+    (setq modus-themes-bold-constructs t)
     (load-theme 'modus-operandi t))
 
   (defvar oak-dark-theme 'modus-vivendi)
