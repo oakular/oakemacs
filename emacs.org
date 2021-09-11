@@ -302,7 +302,13 @@ Use the elisp =ls= implementation.
           '((user :default "quetzalcoatl")
             (server :default "nsbstagedb.postgres.database.azure.com")
             (database :default "")))
-        
+
+  (use-package sqlup-mode
+    :defer)
+
+    (add-hook 'sql-mode-hook #'sqlup-mode)
+    (add-hook 'sql-interative-mode-hook #'sqlup-mode)
+    (add-hook 'sql-interactive-mode-hook #'toggle-truncate-lines)
 #+END_SRC
 ** Eglot
 The backbone of support for software development
@@ -356,6 +362,7 @@ The backbone of support for software development
         :config
         (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
         (add-hook 'csharp-mode-hook #'hl-line-mode)
+        (add-hook 'csharp-mode-hook #'electric-pair-local-mode)
 
         (oak/define-mode-keymap csharp-mode-map '("C-. a" . eglot-code-actions))
         (oak/define-mode-keymap csharp-mode-map '("C-. gi" . eglot-find-implementation))
