@@ -352,6 +352,10 @@ The backbone of support for software development
 #+begin_src emacs-lisp
   (setq compilation-window-height 20)
   (setq compilation-scroll-output t)
+
+  (setq compilation-buffer-name-function
+        (lambda (compilation-mode)
+          (concat "*" (downcase compilation-mode) "*<" (cdr (project-current)) ">")))
 #+end_src
 ** C#
   #+BEGIN_SRC emacs-lisp
@@ -368,9 +372,7 @@ The backbone of support for software development
         (oak/define-mode-keymap csharp-mode-map '("C-. gi" . eglot-find-implementation))
         (oak/define-mode-keymap csharp-mode-map '("C-. gd" . xref-find-definitions))
         (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references))
-        (oak/define-mode-keymap csharp-mode-map '("C-. r" . eglot-rename))
-
-        )
+        (oak/define-mode-keymap csharp-mode-map '("C-. r" . eglot-rename)))
   #+END_SRC
 
 Define functions for migrations.
