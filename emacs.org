@@ -287,6 +287,10 @@ Use the elisp =ls= implementation.
     "Run a shell command in the root of the current project."
     (oak/exec-fun-project-root (shell-command cmd)))
 
+  (defun oak/start-process-project-root (process cmd)
+    "Run a command as a new process."
+    (oak/exec-fun-project-root (start-process process process)))
+
   (defun oak/exec-fun-project-root (fun)
     "Execute a function in the context of the project root."
     (let ((default-directory (vc-root-dir)))
@@ -683,17 +687,6 @@ Org agenda configuration.
 #+end_src
 * Shell
 #+begin_src emacs-lisp
-  (defvar oak-shell "/bin/bash" "The default shell to be used.")
-
-  (defun oak/term () "Opens an ansi-term buffer using the shell set by oak-shell"
-         (interactive)
-         (ansi-term oak-shell))
-
-  (defun oak/build-shell-cmd (cmd-elements)
-    "Build a command string from the elements passed as parameter."
-    (mapconcat 'identity cmd-elements " "))
-
-  (oak/define-global-keymap '("C-x tt" . oak/term))
 #+end_src
 ** Direnv
 #+begin_src emacs-lisp
@@ -731,10 +724,21 @@ Org agenda configuration.
 #+end_src
 * Web browsing
 #+BEGIN_SRC emacs-lisp
-(setq eww-header-line-format "%u - %t")
+  (setq shr-cookie-policy nil)
+  (setq shr-use-colors nil)
+  (setq shr-discard-aria-hidden t)
+  (setq eww-header-line-format "%u - %t")
+
+  (setq url-cookie-untrusted-urls '(".*"))
+  (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
+  (setq eww-bookmarks-directory (expand-file-name (concat user-emacs-directory "eww/bookmarks")))
+  (setq eww-history-limit 300)
+  (setq eww-browse-url-new-window-is-tab nil)
+
 #+END_SRC
 * Media
 ** Podcast/Video Downloads
 #+BEGIN_SRC emacs-lisp
 (require 'oak-youtube-dl)
 #+END_SRC
+
