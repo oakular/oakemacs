@@ -513,17 +513,25 @@ Define functions for cleaning projects
 #+end_src
 ** Javascript
 #+begin_src emacs-lisp
-  (use-package js2-mode
-    :after eglot
-    :mode "\\.js\\'")
+    (use-package js2-mode
+      :hook ((js2-mode . electric-pair-local-mode)
+             (js2-mode . eglot-ensure))
+      :mode "\\.js\\'")
 #+end_src
 *** NodeJS
 **** VueJS
  #+begin_src emacs-lisp
-     (define-derived-mode vue-web-mode web-mode "Vue Web Mode")
-     (add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-web-mode))
-     (setq vue-web-mode-script-padding 0)
-     (add-hook 'vue-web-mode-hook 'eglot-ensure)
+   (define-derived-mode vue-web-mode
+     web-mode
+     "Vue Web Mode"
+     "Major mode for editing Vue.js files."
+     (setq-local web-mode-script-padding 0))
+
+   (add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-web-mode))
+   (add-hook 'vue-web-mode-hook 'electric-pair-local-mode)
+   (add-hook 'vue-web-mode-hook 'electric-layout-local-mode)
+
+   ;; (add-hook 'vue-web-mode-hook 'eglot-ensure)
  #+end_src
 ** YAML
 #+BEGIN_SRC emacs-lisp
