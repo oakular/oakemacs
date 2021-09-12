@@ -113,13 +113,16 @@
 
   (defun oak/load-dark-theme ()
     (interactive)
+    (setq modus-themes-syntax 'faint)
     (load-theme oak-dark-theme t))
 
   (defun oak/load-light-theme ()
     (interactive)
+    (setq modus-themes-syntax 'alt-syntax)
     (load-theme oak-light-theme t))
 
   (oak/setup-fonts)
+  (oak/load-light-theme)
 #+END_SRC
 * Global Keys
 #+begin_src emacs-lisp
@@ -359,20 +362,21 @@ The backbone of support for software development
 #+end_src
 ** C#
   #+BEGIN_SRC emacs-lisp
-      (use-package csharp-mode
-        :ensure t
-        :mode "\\.cs\\'"
-        :hook (csharp-mode . eglot-ensure)
-        :config
-        (add-hook 'csharp-mode-hook #'display-line-numbers-mode)
-        (add-hook 'csharp-mode-hook #'hl-line-mode)
-        (add-hook 'csharp-mode-hook #'electric-pair-local-mode)
+    (use-package csharp-mode
+      :ensure t
+      :mode "\\.cs\\'"
+      :hook ((csharp-mode . eglot-ensure)
+             (csharp-mode . hl-line-mode)
+             (csharp-mode . display-line-numbers-mode)
+             (csharp-mode . electric-pair-local-mode)
+             (csharp-mode . electric-layout-local-mode))
+      :config
 
-        (oak/define-mode-keymap csharp-mode-map '("C-. a" . eglot-code-actions))
-        (oak/define-mode-keymap csharp-mode-map '("C-. gi" . eglot-find-implementation))
-        (oak/define-mode-keymap csharp-mode-map '("C-. gd" . xref-find-definitions))
-        (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references))
-        (oak/define-mode-keymap csharp-mode-map '("C-. r" . eglot-rename)))
+      (oak/define-mode-keymap csharp-mode-map '("C-. a" . eglot-code-actions))
+      (oak/define-mode-keymap csharp-mode-map '("C-. gi" . eglot-find-implementation))
+      (oak/define-mode-keymap csharp-mode-map '("C-. gd" . xref-find-definitions))
+      (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references))
+      (oak/define-mode-keymap csharp-mode-map '("C-. r" . eglot-rename)))
   #+END_SRC
 
 Define functions for migrations.
@@ -513,10 +517,11 @@ Define functions for cleaning projects
 #+end_src
 ** Javascript
 #+begin_src emacs-lisp
-    (use-package js2-mode
-      :hook ((js2-mode . electric-pair-local-mode)
-             (js2-mode . eglot-ensure))
-      :mode "\\.js\\'")
+  (use-package js2-mode
+    :hook ((js2-mode . electric-pair-local-mode)
+           (js2-mode . electric-layout-local-mode)
+           (js2-mode . eglot-ensure))
+    :mode "\\.js\\'")
 #+end_src
 *** NodeJS
 **** VueJS
@@ -525,18 +530,25 @@ Define functions for cleaning projects
      web-mode
      "Vue Web Mode"
      "Major mode for editing Vue.js files."
-     (setq-local web-mode-script-padding 0))
+     (setq-local web-mode-script-padding 0)
+     (setq-local web-mode-enable-auto-pairing nil))
 
    (add-to-list 'auto-mode-alist '("\\.vue\\'" . vue-web-mode))
    (add-hook 'vue-web-mode-hook 'electric-pair-local-mode)
    (add-hook 'vue-web-mode-hook 'electric-layout-local-mode)
-
-   ;; (add-hook 'vue-web-mode-hook 'eglot-ensure)
+   (add-hook 'vue-web-mode-hook 'display-line-numbers-mode)
+   (add-hook 'vue-web-mode-hook 'eglot-ensure)
  #+end_src
 ** YAML
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
     :mode "\\.yml\\'")
+#+END_SRC
+** Elisp
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'emacs-lisp-mode 'eglot-ensure)
+  (add-hook 'emacs-lisp-mmode 'electric-pair-local-mode)
+  (add-hook 'emacs-lisp-mode 'electric-layout-local-mode)
 #+END_SRC
 * Ebooks
 #+begin_src emacs-lisp
@@ -569,6 +581,16 @@ Sane org defaults
     (setq org-special-ctrl-k t)
   #+END_SRC
 
+Source block configuration
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-block-faces '(("emacs-lisp" (:family (when WINDOWS "Cascadia Mono" "Hack") :background "#EEE2FF"))))
+  (setq org-src-fontify-natively t)
+
+  (add-hook 'org-src-mode-hook 'electric-pair-local-mode)
+  (add-hook 'org-src-mode-hook 'hl-line-mode)
+  (add-hook 'org-src-mode-hook 'electric-layout-local-mode)
+#+END_SRC
+  
 Org agenda configuration.
   #+BEGIN_SRC emacs-lisp
     (setq org-agenda-files (list
@@ -641,25 +663,23 @@ Org agenda configuration.
 #+END_SRC
 * Email
 #+begin_src emacs-lisp
-  (use-package gnus
-    :hook (gnus-mode . gnus-topic-mode)
-    :config
-    (setq gnus-select-method
-          '(nnimap "Email"
-                   (nnimap-address "outlook.office365.com")
-                   (nnimap-server-port 993)
-                   (nnimap-stream ssl)
-                   (nnimap-authinfo-file "~/.authinfo")
-                   (send-mail-function 'smtpmail-send-it)
-                   (smtpmail-smtp-server "smtp.office365.com")
-                   (smtpmail-smtp-type 'starttls)
-                   (smtpmail-smtp-service 587)))
+  (setq gnus-select-method
+        '(nnimap "Email"
+                 (nnimap-address "outlook.office365.com")
+                 (nnimap-server-port 993)
+                 (nnimap-stream ssl)
+                 (nnimap-authinfo-file "~/.authinfo")
+                 (send-mail-function 'smtpmail-send-it)
+                 (smtpmail-smtp-server "smtp.office365.com")
+                 (smtpmail-smtp-type 'starttls)
+                 (smtpmail-smtp-service 587)))
 
-    (setq message-send-mail-function 'smtpmail-send-it)
-    (setq gnus-group-line-format "%P%g: %y%m\n"
-          gnus-summary-line-format "%U%R%B %d - %f: %s\n")
+  (setq message-send-mail-function 'smtpmail-send-it)
+  (setq gnus-group-line-format "%P%g: %y%m\n"
+        gnus-summary-line-format "%U%R%B %d - %f: %s\n")
 
-    (setq gnus-thread-sort-functions 'gnus-thread-sort-by-most-recent-date))
+  (setq gnus-thread-sort-functions 'gnus-thread-sort-by-most-recent-date)
+  (add-hook 'gnus-mode-hook 'gnus-topic-mode)
 #+end_src
 * Shell
 #+begin_src emacs-lisp
