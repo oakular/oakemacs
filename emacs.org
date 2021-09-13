@@ -285,27 +285,13 @@ Use the elisp =ls= implementation.
 #+END_SRC
 * Project Management
 #+begin_src emacs-lisp
-  (defun oak/project () "Setup project.el"
-         (setq project-vc-merge-submodules nil))
-
-  (defun oak/shell-command-project-root (cmd)
-    "Run a shell command in the root of the current project."
-    (oak/exec-fun-project-root (shell-command cmd)))
-
-  (defun oak/start-process-project-root (process cmd)
-    "Run a command as a new process."
-    (oak/exec-fun-project-root (start-process process process)))
-
-  (defun oak/exec-fun-project-root (fun)
-    "Execute a function in the context of the project root."
-    (let ((default-directory (vc-root-dir)))
-      (funcall fun)))
+  (require 'oak-project)
 
   (use-package project
     :demand
     :pin gnu
     :config
-    (oak/project))
+    (oak/configure-project))
 #+end_src
 * Software Development
 ** Database
@@ -371,6 +357,8 @@ The backbone of support for software development
 #+end_src
 ** C#
   #+BEGIN_SRC emacs-lisp
+    (require 'oak-dotnet)
+
     (use-package csharp-mode
       :ensure t
       :mode "\\.cs\\'"
@@ -387,136 +375,6 @@ The backbone of support for software development
       (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references))
       (oak/define-mode-keymap csharp-mode-map '("C-. r" . eglot-rename)))
   #+END_SRC
-
-Define functions for migrations.
-  #+begin_src emacs-lisp
-    (defconst dotnet-command "dotnet")
-    (defvar oak-dotnet-migration-project nil
-      "The project directory (relative or absolute) containing project migrations.")
-
-    (defvar oak-dotnet-prompt-for-context nil
-      "Determine whether the user should be prompted for the context name when running migration commands")
-
-    (defun oak/dotnet-get-migration-project ()
-      "Gets the migration project if set as a variable, and fallsback to user input."
-      (expand-file-name
-       (or oak-dotnet-migration-project (read-directory-name "Project directory: "))))
-
-    (defun oak/dotnet-get-context-name ()
-      "Gets the name of the context if oak-dotnet-prompt-for-context is set."
-      (when oak-dotnet-prompt-for-context (read-string "Context: ")))
-
-    (defun oak/dotnet-migration-add (migration-name project &optional context)
-      "Add a migration to the given project"
-      (oak/shell-command-project-root
-       (oak/build-shell-cmd
-        (list "dotnet" "ef" "migrations" "add" "-p" project
-              (when context (concat "-c" " " context))
-              migration-name))))
-
-    (defun oak/dotnet-migration-remove (project &optional context)
-      "Remove the latest migration from the given project"
-      (oak/shell-command-project-root
-       (oak/build-shell-cmd
-        (list "dotnet" "ef" "migrations" "remove"
-              "-p" project
-              (when context (concat "-c" " " context))))))
-
-    (defun oak/dotnet-update-database (project &optional context)
-      "Update the database for the given project and context"
-      (oak/shell-command-project-root
-       (oak/build-shell-cmd
-        (list "dotnet" "ef" "database" "update"
-              "-p" project 
-              (when context (concat "-c" " " context))))))
-
-    (defun oak/dotnet-drop-database (project &optional context)
-      "Drop the database for the given project and context"
-      (oak/shell-command-project-root
-       (oak/build-shell-cmd
-        (list "dotnet" "ef" "database" "drop"
-              "-p" project 
-              (when context (concat "-c" " " context))))))
-
-    (defun oak/do-dotnet-migration-add ()
-      "Interactively add a migration."
-      (interactive)
-      (oak/exec-fun-project-root
-       (oak/dotnet-migration-add (read-string "Migration name: ")
-                                 (oak/dotnet-get-migration-project)
-                                 (oak/dotnet-get-context-name))))
-
-    (defun oak/do-dotnet-migration-remove ()
-      "Interactively remove the latest migration."
-      (interactive)
-      (oak/exec-fun-project-root
-       (oak/dotnet-migration-remove (oak/dotnet-get-migration-project)
-                                    (oak/dotnet-get-context-name))))
-
-
-    (defun oak/do-dotnet-update-database ()
-      "Interactively update the database"
-      (interactive)
-      (oak/exec-fun-project-root
-       (oak/dotnet-update-database (oak/dotnet-get-migration-project)
-                                   (oak/dotnet-get-context-name))))
-
-    (defun oak/do-dotnet-drop-database ()
-      "Interactively update the database"
-      (interactive)
-      (oak/exec-fun-project-root
-       (oak/dotnet-drop-database (oak/dotnet-get-migration-project)
-                                 (oak/dotnet-get-context-name))))
-  #+end_src
-
-Define functions for package handling
-#+begin_src emacs-lisp
-  (defun oak/dotnet-add-package (project package-name)
-    "Add the given package to the given project."
-    (oak/shell-command-project-root
-     (oak/build-shell-cmd
-      (list dotnet-command "add"
-            project
-            "package"
-            package-name))))
-
-  (defun oak/dotnet-remove-package (project package-name)
-    "Remove the given package from the given project."
-    (oak/shell-command-project-root
-     (oak/build-shell-cmd
-      (list dotnet-command "remove"
-            project
-            "package"
-            package-name))))
-
-  (defun oak/do-dotnet-add-package ()
-        "Add a package to a project."
-        (interactive)
-        (oak/exec-fun-project-root
-         (oak/dotnet-add-package (read-directory-name "Project: ")
-                                 (read-string "Package: "))))
-
-  (defun oak/do-dotnet-remove-package ()
-        "Remove a package from a project."
-        (interactive)
-        (oak/exec-fun-project-root
-         (oak/dotnet-remove-package (read-directory-name "Project: ")
-                                   (read-string "Package: "))))
-#+end_src
-
-Define functions for cleaning projects
-#+BEGIN_SRC emacs-lisp
-    (defun oak/dotnet-clean-project ()
-      "Clean the current project."
-      (oak/shell-command-project-root
-       (oak/build-shell-cmd
-        (list dotnet-command "clean"))))
-
-    (defun oak/do-dotnet-clean-project ()
-      "Clean the current project."
-      (interactive)
-      (oak/dotnet-clean-project)g)
-#+END_SRC
 ** Csv
 #+begin_src emacs-lisp
   (use-package csv-mode
@@ -555,9 +413,10 @@ Define functions for cleaning projects
 #+END_SRC
 ** Elisp
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'emacs-lisp-mode 'eglot-ensure)
-  (add-hook 'emacs-lisp-mmode 'electric-pair-local-mode)
-  (add-hook 'emacs-lisp-mode 'electric-layout-local-mode)
+  (add-hook 'emacs-lisp-mode-hook #'eglot-ensure)
+  (add-hook 'emacs-lisp-mode-hook #'electric-pair-local-mode)
+  (add-hook 'emacs-lisp-mode-hook #'electric-layout-local-mode)
+  (add-hook 'emacs-lisp-mode-hook #'flymake-mode)
 #+END_SRC
 * Ebooks
 #+begin_src emacs-lisp
