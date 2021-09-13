@@ -442,6 +442,7 @@ Sane org defaults
       :hook (org-mode . org-sticky-header-mode))
 
     (setq org-directory "~/org/org/")
+    (setq oak-org-journal-file (concat org-directory "journal.org"))
     (setq org-archive-location (concat org-directory "archive/%s_archive::"))
     (setq org-startup-with-latex-preview t)
     (setq org-startup-indented t)
@@ -450,8 +451,7 @@ Sane org defaults
     (setq org-special-ctrl-a t)
     (setq org-special-ctrl-k t)
   #+END_SRC
-
-Source block configuration
+** Source block configuration
 #+BEGIN_SRC emacs-lisp
   (setq org-src-block-faces '(("emacs-lisp" (:family (when WINDOWS "Cascadia Mono" "Hack")))))
   (setq org-src-fontify-natively t)
@@ -460,11 +460,10 @@ Source block configuration
   (add-hook 'org-src-mode-hook 'hl-line-mode)
   (add-hook 'org-src-mode-hook 'electric-layout-local-mode)
 #+END_SRC
-  
-Org agenda configuration.
+** Org agenda configuration.
   #+BEGIN_SRC emacs-lisp
     (setq org-agenda-files (list
-                            (concat org-directory "journal.org")
+                            oak-org-journal-file
                             (concat org-directory "work.org")))
 
     (setq org-agenda-span 1)
@@ -483,42 +482,55 @@ Org agenda configuration.
     (oak/define-global-keymap '("C-c c" . org-capture))
 
   #+END_SRC
+** Org Capture
+Org capture is used here to quickly create tasks, and refile them.
 
-Custom org functions
-  #+begin_src emacs-lisp
-    (defun oak/org-find-file ()
-      "Find a file within the org-directory"
-      (interactive)
-      (let ((default-directory org-directory))
-        (find-file (read-file-name "Find org file: "))))
+#+BEGIN_SRC emacs-lisp
+  (setq org-default-notes-file oak-org-journal-file)
 
-    (defun oak/org-agenda-file-name-to-pair (filename)
-      "Get the multple choice pairing for the filename passed as parameter."
-      (list (aref (file-name-nondirectory filename) 0) (file-name-nondirectory filename)))
+  (setq org-capture-templates
+        '(("t" "Todo" entry
+           (file+headline oak-org-journal-file "Captures")
+           "* TODO %?\n %a")
+          ("d" "Deferred Purchases" entry
+           (file+olp oak-org-journal-file "Finance" "Deferred Purchases")
+           "* %?\n DEADLINE: %^U")))
+#+END_SRC
+** Custom org functions
+#+begin_src emacs-lisp
+      (defun oak/org-find-file ()
+        "Find a file within the org-directory"
+        (interactive)
+        (let ((default-directory org-directory))
+          (find-file (read-file-name "Find org file: "))))
 
-    (defun oak/org-get-agenda-file-choice ()
-      "Get the choices of agenda files."
-      (mapcar 'oak/org-agenda-file-name-to-pair org-agenda-files))
+      (defun oak/org-agenda-file-name-to-pair (filename)
+        "Get the multple choice pairing for the filename passed as parameter."
+        (list (aref (file-name-nondirectory filename) 0) (file-name-nondirectory filename)))
 
-    (defun oak/org-find-agenda-file (filename)
-      "Find the agenda file passed as parameter."
-      (find-file (expand-file-name filename org-directory)))
+      (defun oak/org-get-agenda-file-choice ()
+        "Get the choices of agenda files."
+        (mapcar 'oak/org-agenda-file-name-to-pair org-agenda-files))
 
-    (defun oak/org-choose-agenda-file ()
-      "Choose an agenda file to visit."
-      (interactive)
-      (let ((default-directory org-directory))
-        (oak/org-find-agenda-file (nth 1 (read-multiple-choice "Agenda file:"
-                                                             (oak/org-get-agenda-file-choice))))))
+      (defun oak/org-find-agenda-file (filename)
+        "Find the agenda file passed as parameter."
+        (find-file (expand-file-name filename org-directory)))
 
-    (defun oak/org-sync ()
-      "Sync org directory with cloud storage."
-      (interactive)
-      (shell-command (if (not WINDOWS) "orgsync" "rclone sync C:\\Users\\VNA2\\org oakularorg:org")))
+      (defun oak/org-choose-agenda-file ()
+        "Choose an agenda file to visit."
+        (interactive)
+        (let ((default-directory org-directory))
+          (oak/org-find-agenda-file (nth 1 (read-multiple-choice "Agenda file:"
+                                                               (oak/org-get-agenda-file-choice))))))
 
-    (oak/define-global-keymap '("C-c of" . oak/org-find-file))
-    (oak/define-global-keymap '("C-c oF" . oak/org-choose-agenda-file))
-    (oak/define-global-keymap '("C-c os" . oak/org-sync))
+      (defun oak/org-sync ()
+        "Sync org directory with cloud storage."
+        (interactive)
+        (shell-command (if (not WINDOWS) "orgsync" "rclone sync C:\\Users\\VNA2\\org oakularorg:org")))
+
+      (oak/define-global-keymap '("C-c of" . oak/org-find-file))
+      (oak/define-global-keymap '("C-c oF" . oak/org-choose-agenda-file))
+      (oak/define-global-keymap '("C-c os" . oak/org-sync))
   #+end_src
 ** Eisenhower
 #+BEGIN_SRC emacs-lisp
