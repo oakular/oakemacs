@@ -124,6 +124,11 @@
   (oak/setup-fonts)
   (oak/load-light-theme)
 #+END_SRC
+
+Use variable pitch mode in Info buffers.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'Info-mode-hook #'variable-pitch-mode)
+#+END_SRC
 * Global Keys
 #+begin_src emacs-lisp
     (defun oak/define-global-keymap (keymap) "Define a keymap of global scope."
@@ -587,7 +592,7 @@ Sane org defaults
 
 Source block configuration
 #+BEGIN_SRC emacs-lisp
-  (setq org-src-block-faces '(("emacs-lisp" (:family (when WINDOWS "Cascadia Mono" "Hack") :background "#EEE2FF"))))
+  (setq org-src-block-faces '(("emacs-lisp" (:family (when WINDOWS "Cascadia Mono" "Hack")))))
   (setq org-src-fontify-natively t)
 
   (add-hook 'org-src-mode-hook 'electric-pair-local-mode)
@@ -618,7 +623,7 @@ Org agenda configuration.
 
   #+END_SRC
 
-  Custom org functions
+Custom org functions
   #+begin_src emacs-lisp
     (defun oak/org-find-file ()
       "Find a file within the org-directory"
