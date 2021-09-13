@@ -387,7 +387,9 @@ The backbone of support for software development
   (use-package js2-mode
     :hook ((js2-mode . electric-pair-local-mode)
            (js2-mode . electric-layout-local-mode)
-           (js2-mode . eglot-ensure))
+           (js2-mode . eglot-ensure)
+           (js2-mode . display-line-numbers-mode)
+           (js2-mode . flymake-mode))
     :mode "\\.js\\'")
 #+end_src
 *** NodeJS
