@@ -154,21 +154,6 @@ Use variable pitch mode in Info buffers.
 #+end_src
 * Completion
 #+begin_src emacs-lisp
-  (use-package icomplete-vertical
-    :demand t
-    :custom
-    (completion-category-overrides '((file (styles basic substring))))
-    (read-file-name-completion-ignore-case t)
-    (read-buffer-completion-ignore-case t)
-    (completion-ignore-case t)
-    :config
-    (icomplete-vertical-mode)
-    :bind (:map icomplete-minibuffer-map
-                ("<down>" . icomplete-forward-completions)
-                ("C-n" . icomplete-forward-completions)
-                ("<up>" . icomplete-backward-completions)
-                ("C-p" . icomplete-backward-completions)))
-
   (use-package orderless
     :config
     (setq completion-styles '(orderless)))
