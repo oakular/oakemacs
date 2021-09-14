@@ -316,11 +316,13 @@ The backbone of support for software development
     :ensure t
     :config
     (setq eglot-confirm-server-initiated-edits nil)
-  
+
     (let ((omnisharp-path (if WINDOWS
-                                "~/bin/omnisharp/OmniSharp.exe"
-                              "~/bin/omnisharp/run")))
-        (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp")))))
+                              "~/bin/omnisharp/OmniSharp.exe"
+                            "~/bin/omnisharp/run")))
+      (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp"))))
+    (oak/define-mode-keymap eglot-mode-map '("C-. r" . eglot-rename))
+    (oak/define-mode-keymap eglot-mode-map '("C-. a" . eglot-code-actions)))
 #+end_src
 ** REST Client
 #+begin_src emacs-lisp
@@ -369,11 +371,9 @@ The backbone of support for software development
              (csharp-mode . electric-layout-local-mode))
       :config
 
-      (oak/define-mode-keymap csharp-mode-map '("C-. a" . eglot-code-actions))
       (oak/define-mode-keymap csharp-mode-map '("C-. gi" . eglot-find-implementation))
       (oak/define-mode-keymap csharp-mode-map '("C-. gd" . xref-find-definitions))
-      (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references))
-      (oak/define-mode-keymap csharp-mode-map '("C-. r" . eglot-rename)))
+      (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references)))
   #+END_SRC
 ** Csv
 #+begin_src emacs-lisp
@@ -388,9 +388,12 @@ The backbone of support for software development
     :hook ((js2-mode . electric-pair-local-mode)
            (js2-mode . electric-layout-local-mode)
            (js2-mode . eglot-ensure)
-           (js2-mode . display-line-numbers-mode)
-           (js2-mode . flymake-mode))
-    :mode "\\.js\\'")
+           (js2-mode . display-line-numbers-mode))
+    :mode "\\.js\\'"
+    :config
+    (oak/define-mode-keymap js2-mode-map '("C-. gi" . eglot-find-implementation))
+    (oak/define-mode-keymap js2-mode-map '("C-. gd" . xref-find-definitions))
+    (oak/define-mode-keymap js2-mode-map '("C-. gr" . xref-find-references)))
 #+end_src
 *** NodeJS
 **** VueJS
