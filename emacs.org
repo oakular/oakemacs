@@ -162,13 +162,16 @@ Use variable pitch mode in Info buffers.
     (read-buffer-completion-ignore-case t)
     (completion-ignore-case t)
     :config
-    (fido-mode)
     (icomplete-vertical-mode)
     :bind (:map icomplete-minibuffer-map
                 ("<down>" . icomplete-forward-completions)
                 ("C-n" . icomplete-forward-completions)
                 ("<up>" . icomplete-backward-completions)
                 ("C-p" . icomplete-backward-completions)))
+
+  (use-package orderless
+    :config
+    (setq completion-styles '(orderless)))
 #+end_src
 * Window Management
 We define some rules about how certain buffers should appear.  This is
