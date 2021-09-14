@@ -127,7 +127,10 @@
 
 Use variable pitch mode in Info buffers.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'Info-mode-hook #'variable-pitch-mode)
+  (add-hook 'Info-mode-hook (lambda ()
+                              (variable-pitch-mode)
+                              (text-scale-mode 1)
+                              (text-scale-increase 1)))
 #+END_SRC
 * Global Keys
 #+begin_src emacs-lisp
@@ -155,7 +158,11 @@ Use variable pitch mode in Info buffers.
 * Completion
 #+begin_src emacs-lisp
   (use-package orderless
+    :demand t
     :config
+    (setq completion-ignore-case
+          read-buffer-completion-ignore-case
+          read-file-name-completion-ignore-case t)
     (setq completion-styles '(orderless)))
 #+end_src
 * Window Management
@@ -259,16 +266,19 @@ Use the elisp =ls= implementation.
 #+end_src
 * Version Control
 #+BEGIN_SRC emacs-lisp
-    (use-package magit
-      :ensure t
-      :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
-      :init
-      (oak/define-global-keymap '("C-x vcm" . magit-status))
-      (oak/define-global-keymap '("C-x vb" . magit-blame)))
+  (use-package magit
+    :ensure t
+    :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
+    :init
+    (oak/define-global-keymap '("C-x vd" . magit-status))
+    (oak/define-global-keymap '("C-x vb" . magit-blame))
+    (oak/define-global-keymap '("C-x v+" . magit-pull))
+    (oak/define-global-keymap '("C-x vp" . magit-push))
+    (oak/define-global-keymap '("C-x vc" . magit-commit)))
 
-    (use-package vc
-      :pin gnu
-      :commands (vc-dir vc-log-outgoing vc-log-incoming vc-annotate))
+  (use-package vc
+    :pin gnu
+    :commands (vc-dir vc-log-outgoing vc-log-incoming vc-annotate))
 
 #+END_SRC
 * Project Management
