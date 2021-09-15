@@ -136,27 +136,35 @@ Use variable pitch mode in Info buffers.
 #+END_SRC
 * Global Keys
 #+begin_src emacs-lisp
-    (defun oak/define-global-keymap (keymap) "Define a keymap of global scope."
-           (let ((map global-map))
-             (define-key map (kbd (car keymap)) (cdr keymap))))
+  (defun oak/define-global-keymap (keymap) "Define a keymap of global scope."
+         (let ((map global-map))
+           (define-key map (kbd (car keymap)) (cdr keymap))))
 
-    (defun oak/define-mode-keymap (mode keymap)
-      "Define a keymap in the scope of the provided mode."
-      (define-key mode (kbd (car keymap)) (cdr keymap)))
+  (defun oak/define-mode-keymap (mode keymap)
+    "Define a keymap in the scope of the provided mode."
+    (define-key mode (kbd (car keymap)) (cdr keymap)))
 
-    (defun oak/define-global-keymaps (keymaps) "Define a set of keymaps of global scope."
-           (dolist (keymap keymaps) (oak/define-global-keymap keymap) nil))
+  (defun oak/define-global-keymaps (keymaps) "Define a set of keymaps of global scope."
+         (dolist (keymap keymaps) (oak/define-global-keymap keymap) nil))
 
-    (defun oak/global-keymaps () "Enables all global keymaps."
-           (let ((keymaps '(("C-x cr" . oak/reload-config)
-                            ("C-x ctd" . oak/load-dark-theme)
-                            ("C-x ctl" . oak/load-light-theme)
-                            ("C-x g" . gnus)
-                            ("s-w" . eww))))
-             (oak/define-global-keymaps keymaps)))
+  (defun oak/global-keymaps () "Enables all global keymaps."
+         (let ((keymaps '(("C-x cr" . oak/reload-config)
+                          ("C-x ctd" . oak/load-dark-theme)
+                          ("C-x ctl" . oak/load-light-theme)
+                          ("C-x g" . gnus)
+                          ("s-w" . eww))))
+           (oak/define-global-keymaps keymaps)))
 
-    (oak/global-keymaps)
+  (oak/global-keymaps)
 #+end_src
+** Windows
+Windows has different behaviour to *nix systems regarding keys. Here
+we mainly try to impose *nix patterns on the Window environment.
+
+#+BEGIN_SRC emacs-lisp
+  (setq w32-lwindow-modifier 'super) ;; mark Windows key as super
+  (setq w32-pass-lwindow-to-system nil)
+#+END_SRC
 * Completion
 #+begin_src emacs-lisp
   (use-package orderless
@@ -444,6 +452,7 @@ Sane org defaults
       :after org
       :hook (org-mode . org-sticky-header-mode))
 
+    (add-to-list 'org-modules 'org-tempo)
     (setq org-directory "~/org/org/")
     (setq oak-org-journal-file (concat org-directory "journal.org"))
     (setq org-archive-location (concat org-directory "archive/%s_archive::"))
