@@ -3,10 +3,29 @@
 (require 'project)
 
 (defvar oak-project-run-command nil
-  "The command to executing when running a project.")
+  "The command to execute when running a project.")
 
-(defun oak/configure-project () "Setup project.el"
-       (setq project-vc-merge-submodules nil))
+(defun oak-project/configure ()
+  "Setup project.el."
+  (add-to-list 'project-switch-commands '(magit-status "Magit status"))
+  (setq project-prefix-map '(keymap
+                             (120 . project-execute-extended-command)
+                             (114 . project-query-replace-regexp)
+                             (71 . project-or-external-find-regexp)
+                             (103 . project-find-regexp)
+                             (112 . project-switch-project)
+                             (107 . project-kill-buffers)
+                             (101 . project-eshell)
+                             (99 . project-compile)
+                             (118 . magit-status)
+                             (100 . project-dired)
+                             (115 . project-shell)
+                             (98 . project-switch-to-buffer)
+                             (70 . project-or-external-find-file)
+                             (102 . project-find-file)
+                             (38 . project-async-shell-command)
+                             (33 . project-shell-command)))
+    (setq project-vc-merge-submodules nil))
 
 (defun oak/shell-command-project-root (cmd)
   "Run a shell command in the root of the current project."
