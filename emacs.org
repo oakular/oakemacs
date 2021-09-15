@@ -94,9 +94,11 @@
 * Theme
 #+BEGIN_SRC emacs-lisp
   (defun oak/setup-fonts () "Setup basic font configuration."
-         (set-face-attribute 'default nil :height 80)
-         (set-face-attribute 'default nil :width 'ultra-condensed)
-         (set-face-attribute 'default nil :family (when WINDOWS "Cascadia Mono" "Hack")))
+         (let ((monospace-font "Cascadia Code-9"))
+           (set-face-attribute 'default nil :font monospace-font)
+           (set-face-attribute 'fixed-pitch nil :font monospace-font))
+           (when WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
+                 (set-face-attribute 'variable-pitch nil :font "Overpass-8")))
 
   (use-package modus-themes
     :ensure t
@@ -289,7 +291,7 @@ Use the elisp =ls= implementation.
     :demand
     :pin gnu
     :config
-    (oak/configure-project))
+    (oak-project/configure))
 #+end_src
 * Software Development
 ** Database
@@ -451,6 +453,8 @@ Sane org defaults
     (setq org-footnotes-auto-adjust t)
     (setq org-special-ctrl-a t)
     (setq org-special-ctrl-k t)
+
+    (add-hook 'org-mode-hook #'text-scale-mode)
   #+END_SRC
 ** Source block configuration
 #+BEGIN_SRC emacs-lisp
