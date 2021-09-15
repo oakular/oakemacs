@@ -94,10 +94,10 @@
 * Theme
 #+BEGIN_SRC emacs-lisp
   (defun oak/setup-fonts () "Setup basic font configuration."
-         (let ((monospace-font "Cascadia Code-9"))
+         (let ((monospace-font "Cascadia Code-8"))
            (set-face-attribute 'default nil :font monospace-font)
            (set-face-attribute 'fixed-pitch nil :font monospace-font))
-           (when WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
+           (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
                  (set-face-attribute 'variable-pitch nil :font "Overpass-8")))
 
   (use-package modus-themes
@@ -180,7 +180,7 @@ screen real estate.
            (window-width . 0.3)
            (side . right)
            (slot . 0))
-          ("\\*\\(compilation\\|vc-git :\\).*"
+          ("\\*\\(compilation\\|vc-git :\\|dotnet-process\\).*"
            (display-buffer-in-side-window)
            (window-height . 0.20)
            (side . bottom)

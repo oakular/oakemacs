@@ -17,13 +17,6 @@
 (defvar oak-dotnet-prompt-for-context nil
   "Determine whether the user should be prompted for the context name when running migration commands.")
 
-(add-to-list 'display-buffer-alist
-             '("\\*dotnet-process.*"
-               (display-buffer-in-side-window)
-               (window-width . 0.20)
-               (side . bottom)
-               (slot . -1)))
-
 (defun oak-dotnet/get-migration-project ()
   "Gets the migration project if set as a variable, and fallsback to user input."
   (expand-file-name
