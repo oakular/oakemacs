@@ -98,7 +98,7 @@
            (set-face-attribute 'default nil :font monospace-font)
            (set-face-attribute 'fixed-pitch nil :font monospace-font))
            (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
-                 (set-face-attribute 'variable-pitch nil :font "Overpass-8")))
+                 (set-face-attribute 'variable-pitch nil :font "Liberation Sans-8")))
 
   (use-package modus-themes
     :ensure t
@@ -315,6 +315,16 @@ Use the elisp =ls= implementation.
     (add-hook 'sql-mode-hook #'sqlup-mode)
     (add-hook 'sql-interative-mode-hook #'sqlup-mode)
     (add-hook 'sql-interactive-mode-hook #'toggle-truncate-lines)
+#+END_SRC
+** Debugging
+By default Emacs has no support for LLDB, mainly due to perceived
+competition between GCC and LLVM. Here, we load an extension to Emacs'
+default debugger interface, GUD, which provides support for LLDB. The
+code was retrieved from [[https://raw.githubusercontent.com/ptrv/emacs.d/master/site-lisp/gud-lldb.el][here]]. Naturally, this extension requires LLDB
+is installed on your machine.
+
+#+BEGIN_SRC emacs-lisp
+(require 'gud-lldb)
 #+END_SRC
 ** Eglot
 The backbone of support for software development
@@ -578,8 +588,6 @@ Org capture is used here to quickly create tasks, and refile them.
   (add-hook 'gnus-mode-hook 'gnus-topic-mode)
 #+end_src
 * Shell
-#+begin_src emacs-lisp
-#+end_src
 ** Direnv
 #+begin_src emacs-lisp
   (use-package envrc
