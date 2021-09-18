@@ -357,7 +357,8 @@ The backbone of support for software development
   (use-package web-mode
     :mode "\\.cshtml\\'"
     :config
-    (add-hook 'web-mode-hook #'hl-line-mode))
+    (add-hook 'web-mode-hook #'hl-line-mode)
+    (add-hook 'web-mode-hook #'display-line-numbers-mode))
 
   (add-to-list 'auto-mode-alist  '("\\.css\\'" . web-mode))
 
@@ -472,7 +473,7 @@ Sane org defaults
     (setq org-footnotes-auto-adjust t)
     (setq org-special-ctrl-a t)
     (setq org-special-ctrl-k t)
-
+    (setq org-tags-column -80) ;; flush tags on the 80th column
     (add-hook 'org-mode-hook #'text-scale-mode)
   #+END_SRC
 ** Source block configuration
@@ -556,6 +557,11 @@ Org capture is used here to quickly create tasks, and refile them.
       (oak/define-global-keymap '("C-c oF" . oak/org-choose-agenda-file))
       (oak/define-global-keymap '("C-c os" . oak/org-sync))
   #+end_src
+** Refiling
+#+BEGIN_SRC emacs-lisp
+  (setq org-refile-use-outline-path t)
+  (setq org-refile-targets '((nil . (:level . 1))))
+#+END_SRC
 ** Eisenhower
 #+BEGIN_SRC emacs-lisp
   (setq org-tag-alist '(("important" . ?i)
