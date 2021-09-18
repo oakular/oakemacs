@@ -164,6 +164,7 @@ we mainly try to impose *nix patterns on the Window environment.
 #+BEGIN_SRC emacs-lisp
   (setq w32-lwindow-modifier 'super) ;; mark Windows key as super
   (setq w32-pass-lwindow-to-system nil)
+  (w32-register-hot-key [s-])
 #+END_SRC
 * Completion
 #+begin_src emacs-lisp
