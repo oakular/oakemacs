@@ -156,3 +156,5 @@
    oak-dotnet-process-name-as-buffer-name))
 
 (provide 'oak-dotnet)
+
+;;; oak-dotnet.el ends here
