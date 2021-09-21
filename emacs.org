@@ -281,10 +281,8 @@ Use the elisp =ls= implementation.
     :ensure t
     :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
     :init
-    (oak/define-global-keymap '("C-x vd" . magit-status))
     (oak/define-global-keymap '("C-x vb" . magit-blame))
-    (oak/define-global-keymap '("C-x v+" . magit-pull))
-    (oak/define-global-keymap '("C-x vp" . magit-push))
+    (oak/define-global-keymap '("C-x vS" . magit-status))
     (oak/define-global-keymap '("C-x vc" . magit-commit)))
 
   (use-package vc
@@ -625,7 +623,7 @@ Org capture is used here to quickly create tasks, and refile them.
 
   (defun oak/suspend () "Suspend the host machine."
          (interactive)
-         (shell-command (if (not WINDOWS) "loginctl suspend" "shutdown /h")))
+         (shell-command (if (not WINDOWS) "systemctl suspend" "shutdown /h")))
 
   (defun oak/tokindle () "Sync file(s) to a mounted kindle"
          (interactive)
