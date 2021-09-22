@@ -107,6 +107,9 @@
     :config
     (setq modus-themes-paren-match 'subtle-bold)
     (setq modus-themes-mode-line '3d)
+    (setq modus-themes-org-agenda '((header-block . (variable-pitch scale-title))
+                                    (header-date . (workaholic bold-today))
+                                    (habit . simplified)))
     ;; (setq modus-themes-bold-constructs t)
     (load-theme 'modus-operandi t))
 
@@ -403,15 +406,16 @@ The backbone of support for software development
 ** Javascript
 #+begin_src emacs-lisp
   (use-package js2-mode
+    :mode "\\.js\\'"
     :hook ((js2-mode . electric-pair-local-mode)
            (js2-mode . electric-layout-local-mode)
            (js2-mode . eglot-ensure)
            (js2-mode . display-line-numbers-mode))
-           :config
-           (oak/add-auto-mode ".js" js2-mode)
-           (oak/define-mode-keymap js2-mode-map '("C-. gi" . eglot-find-implementation))
-           (oak/define-mode-keymap js2-mode-map '("C-. gd" . xref-find-definitions))
-           (oak/define-mode-keymap js2-mode-map '("C-. gr" . xref-find-references)))
+    :config
+    ;; (oak/add-auto-mode ".js" js2-mode)
+    (oak/define-mode-keymap js2-mode-map '("C-. gi" . eglot-find-implementation))
+    (oak/define-mode-keymap js2-mode-map '("C-. gd" . xref-find-definitions))
+    (oak/define-mode-keymap js2-mode-map '("C-. gr" . xref-find-references)))
 #+end_src
 *** NodeJS
 **** VueJS
@@ -445,8 +449,8 @@ The backbone of support for software development
 Nix provides use with the ability to create replicable development environments on a per project basis.
 #+begin_src emacs-lisp
   (use-package nix-mode
-  :config
-  (oak/add-auto-mode ".nix" nix-mode))
+    :mode "\\.nix\\'")
+  ;; (oak/add-auto-mode ".nix" nix-mode)
 #+end_src
 * Ebooks
 #+begin_src emacs-lisp
@@ -471,8 +475,8 @@ Sane org defaults
 
     (add-to-list 'org-modules 'org-tempo)
     (setq org-directory "~/org/org/")
-    (setq oak-org-journal-file (concat org-directory "journal.org"))
-    (setq org-archive-location (concat org-directory "archive/%s_archive::"))
+    (setq oak-org-journal-file (concat org-directory "journal.org.gpg"))
+    (setq org-archive-location (concat org-directory "archive/archive_%s::"))
     (setq org-startup-with-latex-preview t)
     (setq org-startup-indented t)
     (setq org-hide-emphasis-markers nil)
@@ -480,6 +484,8 @@ Sane org defaults
     (setq org-special-ctrl-a t)
     (setq org-special-ctrl-k t)
     (setq org-tags-column -80) ;; flush tags on the 80th column
+    (add-to-list 'org-modules 'org-habit)
+    (setq org-habit-show-habits-only-for-today nil)
     (add-hook 'org-mode-hook #'text-scale-mode)
   #+END_SRC
 ** Source block configuration
@@ -579,6 +585,15 @@ Org capture is used here to quickly create tasks, and refile them.
           ("3" "Q3" tags-todo "-important+urgent")
           ("4" "Q4" tags-todo "-important-urgent")))
 #+END_SRC
+* Encryption
+Asymmetric encryption of personal files is a valid goal. One cannot
+trust the location they store their files to be secure, especially not
+when storage is delegated to the cloud; cloud services are a black
+box, and no one outside its maintainers know what is really going on.
+
+#+begin_src emacs-lisp
+(epa-file-enable)
+#+end_src
 * Email
 #+begin_src emacs-lisp
   (setq gnus-select-method
