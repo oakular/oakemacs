@@ -22,7 +22,6 @@
   (expand-file-name
    (or oak-dotnet-migration-project (read-directory-name "Project directory: "))))
 
-
 (defun oak-dotnet/get-startup-project ()
   "Gets the startup project if set as a variable, and fallsback to user input."
   (expand-file-name
@@ -32,44 +31,52 @@
   "Gets the name of the context if \"oak-dotnet-prompt-for-context\" is set."
   (when oak-dotnet-prompt-for-context (read-string "Context: ")))
 
-(defun oak-dotnet/migration-add (migration-name project &optional context)
-  "Add a migration called MIGRATION-NAME to the given PROJECT and CONTEXT."
+(defun oak-dotnet/migration-add (migration-name project &optional startup-project context)
+  "Add a migration called MIGRATION-NAME to the given PROJECT, STARTUP-PROJECT and CONTEXT."
   (oak/make-process-project-root :name (concat oak-dotnet-process-name "-migration-add")
                                  :buffer oak-dotnet-process-name-as-buffer-name
-                                 :command (list "dotnet" "ef" "migrations" "add" "-p" project
-                                                (when context "-c")
-                                                (when context context)
-                                                migration-name)))
+                                 :command (seq-filter 'stringp (list "dotnet" "ef" "migrations" "add" "-p" project
+                                                                     (when startup-project "-s")
+                                                                     startup-project
+                                                                     (when context "-c")
+                                                                     context
+                                                                     migration-name))))
 
-(defun oak-dotnet/migration-remove (project &optional context)
-  "Remove the latest migration from the PROJECT and CONTEXT."
+(defun oak-dotnet/migration-remove (project &optional startup-project context)
+  "Remove the latest migration from the PROJECT, STARTUP-PROJECT and CONTEXT."
   (oak/make-process-project-root
    :name (concat oak-dotnet-process-name "-migration-remove")
    :buffer oak-dotnet-process-name-as-buffer-name
-   :command (list "dotnet" "ef" "migrations" "remove"
-                  "-p" project
-                  (when context "-c" )
-                  (when context context))))
+   :command (seq-filter 'stringp (list "dotnet" "ef" "migrations" "remove"
+                                       "-p" project
+                                       (when startup-project "-s")
+                                       startup-project
+                                       (when context "-c" )
+                                       context))))
 
-(defun oak-dotnet/update-database (project &optional context)
-  "Update the database for the PROJECT and CONTEXT."
+(defun oak-dotnet/update-database (project &optional startup-project context)
+  "Update the database for the PROJECT, STARTUP-PROJECT and CONTEXT."
   (oak/make-process-project-root
    :name (concat oak-dotnet-process-name "-update-database")
    :buffer oak-dotnet-process-name-as-buffer-name
-   :command (list "dotnet" "ef" "database" "update"
-                  "-p" project
-                  (when context "-c")
-                  (when context context))))
+   :command (seq-filter 'stringp (list "dotnet" "ef" "database" "update"
+                                       "-p" project
+                                       (when startup-project "-s")
+                                       startup-project
+                                       (when context "-c")
+                                       context))))
 
-(defun oak-dotnet/drop-database (project &optional context)
-  "Drop the database for the PROJECT and CONTEXT."
+(defun oak-dotnet/drop-database (project &optional startup-project context)
+  "Drop the database for the PROJECT, STARTUP-PROJECT and CONTEXT."
   (oak/make-process-project-root
    :name (concat oak-dotnet-process-name "-update-database")
    :buffer oak-dotnet-process-name-as-buffer-name
-   :command (list "dotnet" "ef" "database" "drop"
-                  "-p" project
-                  (when context "-c")
-                  (when context context))))
+   :command (seq-filter 'stringp (list "dotnet" "ef" "database" "drop"
+                                       "-p" project
+                                       (when startup-project "-s")
+                                       startup-project
+                                       (when context "-c")
+                                       (when context context)))))
 
 (defun oak-dotnet/do-migration-add ()
   "Interactively add a migration."
@@ -78,6 +85,7 @@
    (lambda ()
      (oak-dotnet/migration-add (read-string "Migration name: ")
                                (oak-dotnet/get-migration-project)
+                               (oak-dotnet/get-startup-project)
                                (oak-dotnet/get-context-name)))
    oak-dotnet-process-name-as-buffer-name))
 
@@ -86,8 +94,9 @@
   (interactive)
   (oak-common/run-function-display-buffer
    (lambda ()
-    (oak-dotnet/migration-remove (oak-dotnet/get-migration-project)
-                                 (oak-dotnet/get-context-name)))
+     (oak-dotnet/migration-remove (oak-dotnet/get-migration-project)
+                                  (oak-dotnet/get-startup-project)
+                                  (oak-dotnet/get-context-name)))
     oak-dotnet-process-name-as-buffer-name))
 
 (defun oak-dotnet/do-update-database ()
@@ -96,6 +105,7 @@
   (oak-common/run-function-display-buffer
    (lambda ()
      (oak-dotnet/update-database (oak-dotnet/get-migration-project)
+                                 (oak-dotnet/get-startup-project)
                                  (oak-dotnet/get-context-name)))
    oak-dotnet-process-name-as-buffer-name))
 
@@ -105,6 +115,7 @@
   (oak-common/run-function-display-buffer
    (lambda ()
      (oak-dotnet/drop-database (oak-dotnet/get-migration-project)
+                               (oak-dotnet/get-startup-project)
                                (oak-dotnet/get-context-name)))
    oak-dotnet-process-name-as-buffer-name))
 
