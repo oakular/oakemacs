@@ -501,7 +501,7 @@ Sane org defaults
   #+BEGIN_SRC emacs-lisp
     (setq org-agenda-files (list
                             oak-org-journal-file
-                            (concat org-directory "work.org")))
+                            (concat org-directory "work.org.gpg")))
 
     (setq org-agenda-span 1)
     (setq org-agenda-window-setup 'other-window)
