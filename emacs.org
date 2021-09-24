@@ -486,7 +486,7 @@ Sane org defaults
     (setq org-tags-column -80) ;; flush tags on the 80th column
     (add-to-list 'org-modules 'org-habit)
     (setq org-habit-show-habits-only-for-today nil)
-    (add-hook 'org-mode-hook #'text-scale-mode)
+  
   #+END_SRC
 ** Source block configuration
 #+BEGIN_SRC emacs-lisp
@@ -521,7 +521,6 @@ Sane org defaults
   #+END_SRC
 ** Org Capture
 Org capture is used here to quickly create tasks, and refile them.
-
 #+BEGIN_SRC emacs-lisp
   (setq org-default-notes-file oak-org-journal-file)
 
@@ -531,7 +530,10 @@ Org capture is used here to quickly create tasks, and refile them.
            "* TODO %?\n %a")
           ("d" "Deferred Purchases" entry
            (file+olp oak-org-journal-file "Finance" "Deferred Purchases")
-           "* %?\n DEADLINE: %^U")))
+           "* %?\n DEADLINE: %^U")
+          ("r" "Reminder" entry
+           (file+headline oak-org-journal-file "Reminders")
+           "* %?\n %^T\n %a")))
 #+END_SRC
 ** Custom org functions
 #+begin_src emacs-lisp
