@@ -3,10 +3,12 @@
 (defconst sburl-domain "https://api.starlingbank.com")
 (defconst sburl-domain-suffix "/api/v2")
 
-(defconst pat "")
+(defconst sburl-pat "eyJhbGciOiJQUzI1NiIsInppcCI6IkdaSVAifQ.H4sIAAAAAAAAAC1QSW4DMQz7SuFzFHhf5tZbP9AHyLJSGJl6grFTFCj69zqdHEmJFKkfUXsXi8BbPfeB-1rbR8Z2PdP2KU6i3_McZn8J2bODFKUB662BbIwGF1MMuaTsvZzL_H0Tiw3BqqStVydRcYhFeRWdivFBINF2b-NtWwvv77VMb-mTtFkGQOMc2BgcxGAc5ET2IqNnzjy9x3bldihwpnGaHEhHGqx2HrK0Adi7khOix6KmYjZ6JeLeD5UqxkvrCJgDgiUTIErlQWvlFClMRptHYdpu_DhyJF12xvLyBLDW_mTGjq0jjbq1g8i4YiM-wHzk4E-eCupf_5T4_QOqR2rgaQEAAA.maFzsEPPluhSamzRPh71oGOZFAkAIimH4wzV-Cx3eoC4w06Zr7XFrnDzpfocaXAtxynflXO37LVVgN7JgB4HvynuIiONjuj6rKxAYyiZv-xgHxzqYNngtQNic25KlpVsqu2ZAu7QHgHe6lkruKKRRVs9dpU4-qwteBy5A_vkWA53txFic9TJKBpViG1AsXHibhuBTU4uycyqNbiabUKoGqRZf9KOIfDtXbJ-cS5g4LPrR-VkXaWFv7CoKpG2NRm9eIePITVcknl9u3SNqv3uG6Rik5g7YY7QnvqUyetIT1zrDjnEISSfP_zvaUDINFQyzQvrrSRbRsDq-F0hvhmhtuNH3KgyCDf77qI5-cYpNs9TnvROJCfILPc0GpSqANjnuR3nKmOybNmhOLpt4YzHIQdd_z7595UqHE8Tuc9N-RE4jAbP770mzW7Hmu-NboaN9gZ5nbFMceanaGsLqdYHXe1wd5VldproxrFvwMQIIJ4hPTSlc-hH2zX3Q1XtNLxcVNmEf1O5Wi5pYlpzTgDznZNmKjRIWI_9ETWrQ-dC4Us94C3ff5aNxxwDNSHiIba8NHw5kM_7bxlo7uI4rPcFjWCN_YgCRqK0pfbkF4EjOXn-uZDSdP25Ly8BKYN_SxViE8x8Xn0UjsEYMGj3alx0S0taCUdCbViG7kIPoaf9_M4")
+
+(defvar account-uid nil)
 
 (defun sburl/build-endpoint (endpoint-suffix)
-  "Returns the full endpoint URL for the API call for the ENDPOINT-SUFFIX."
+  "Return the full endpoint URL for the API call for the ENDPOINT-SUFFIX."
   (concat sburl-domain sburl-domain-suffix endpoint-suffix))
 
 (defun sburl/get-path (&optional file-path)
@@ -22,17 +24,11 @@
 
 (defun sburl/get-accounts ()
   "Get the accounts for the configured personal access token."
-      (request (sburl/build-endpoint "/accounts")
-        :headers '(("Authorization" . "Bearer pat"))
-        :parser 'json-read
-        :success
-        (cl-function
-         (lambda (&key data)
-           (when data
-             (with-current-buffer (get-buffer-create "*starling accounts")
-               (erase-buffer)
-               (insert data)
-               (pop-to-buffer (current-buffer))))))))
+  (let ((url-request-extra-headers
+         (("Authorization" #'(lambda () (concat "Bearer " sburl-pat)))
+          ("Content-Type" . "application/json")))
+        (request-url (sburl/build-endpoint "/accounts")))
+    (display-buffer (url-retrieve-synchronously request-url))))
 
 (provide 'sburl)
 
