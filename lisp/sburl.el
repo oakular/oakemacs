@@ -1,5 +1,3 @@
-(require 'request)
-
 (defconst sburl-domain "https://api.starlingbank.com")
 (defconst sburl-domain-suffix "/api/v2")
 
@@ -8,6 +6,9 @@
 (defvar account-uid nil)
 
 (defvar sburl-auth-header (concat "Bearer " sburl-pat))
+
+(defconst sburl-headers `(("Authorization" . ,sburl-auth-header)
+                        ("Content-Type" . "application/json")))
 
 (defun sburl/build-endpoint (endpoint-suffix)
   "Return the full endpoint URL for the API call for the ENDPOINT-SUFFIX."
@@ -23,19 +24,22 @@
       (goto-char url-http-end-of-headers)
       (json-read)))
 
-(defun sburl/get-transactions (start-date end-date)
-  "Get the transactions lised between the START-DATE and END-DATE."
-  (request (sburl/build-endpoint (concat "/accounts/" account-uid "/statement/downloadForRange"))
-           :headers '(("Authorization" . (concat "Bearer " pat))
-           :parser 'json-read)))
-
+(defun sburl/get-transactions (account start-date end-date)
+  "Get the transactions logged for the ACCOUNT between START-DATE and END-DATE."
+  (let ((request-url (sburl/build-endpoint (concat "/accounts/"
+                                                   (cdr (assoc 'accountUid account))
+                                                   "/statement/downloadForDateRange?"
+                                                   "start=" start-date
+                                                   "&"
+                                                   "end=" end-date)))
+        (url-request-extra-headers (append sburl-headers '(("Accept" . "text/csv")))))
+    (url-retrieve-synchronously request-url)))
+  
 (defun sburl/get-accounts ()
   "Get the accounts for the configured personal access token."
-  (let ((url-request-extra-headers
-         `(("Authorization" . ,sburl-auth-header)
-           ("Content-Type" . "application/json")))
-        (request-url (sburl/build-endpoint "/accounts")))
-    (assoc 'accounts (sburl/decode-response (url-retrieve-synchronously request-url)))))
+  (let ((request-url (sburl/build-endpoint "/accounts"))
+        (url-request-extra-headers sburl-headers))
+        (assoc 'accounts (sburl/decode-response (url-retrieve-synchronously request-url)))))
 
 (defun sburl/get-account-by-name (account-name)
   "Return the account details by the ACCOUNT-NAME given."
