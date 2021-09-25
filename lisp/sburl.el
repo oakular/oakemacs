@@ -13,8 +13,6 @@
     (insert-file-contents "~/.config/sburl/pat")
     (buffer-string)))
 
-(defvar account-uid nil)
-
 (defvar sburl-auth-header (concat "Bearer " (sburl/get-pat)))
 
 (defconst sburl-headers `(("Authorization" . ,sburl-auth-header)
