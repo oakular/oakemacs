@@ -7,6 +7,8 @@
 
 (defvar account-uid nil)
 
+(defvar sburl-auth-header (concat "Bearer " sburl-pat))
+
 (defun sburl/build-endpoint (endpoint-suffix)
   "Return the full endpoint URL for the API call for the ENDPOINT-SUFFIX."
   (concat sburl-domain sburl-domain-suffix endpoint-suffix))
@@ -15,6 +17,11 @@
   "Get the configuration file from FILE-PATH, falling back to the default location."
   (with-temp-buffer
     (insert-file-contents (or file-path "~/.config/sburl/config"))))
+
+(defun sburl/decode-response (response-buffer)
+      (with-current-buffer response-buffer
+      (goto-char url-http-end-of-headers)
+      (json-read)))
 
 (defun sburl/get-transactions (start-date end-date)
   "Get the transactions lised between the START-DATE and END-DATE."
@@ -25,10 +32,16 @@
 (defun sburl/get-accounts ()
   "Get the accounts for the configured personal access token."
   (let ((url-request-extra-headers
-         (("Authorization" #'(lambda () (concat "Bearer " sburl-pat)))
-          ("Content-Type" . "application/json")))
+         `(("Authorization" . ,sburl-auth-header)
+           ("Content-Type" . "application/json")))
         (request-url (sburl/build-endpoint "/accounts")))
-    (display-buffer (url-retrieve-synchronously request-url))))
+    (assoc 'accounts (sburl/decode-response (url-retrieve-synchronously request-url)))))
+
+(defun sburl/get-account-by-name (account-name)
+  "Return the account details by the ACCOUNT-NAME given."
+  (seq-find
+   (lambda (elt) (string-equal account-name (cdr (assoc 'name elt))))
+   (cdr (sburl/get-accounts))))
 
 (provide 'sburl)
 
