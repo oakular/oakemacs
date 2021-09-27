@@ -8,9 +8,10 @@
   "Format the transactions in BUFFER for import into ledger."
   (with-current-buffer buffer
     (delete-region (point-min) (+ url-http-end-of-headers 1))
+    (goto-char (point-min))
     (kill-line 1)
     (move-beginning-of-line nil)
-    (insert "date,payee,note,,amount,,desc\n"))
+    (insert "date,payee,,,amount,,note\n"))
   buffer)
 
 (defun starl/format-transactions-for-display (buffer)
