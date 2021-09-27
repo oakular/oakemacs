@@ -6,7 +6,7 @@
 
 (defun sburl/get-pat ()
   "Return the personal access token stored in the configuration folder."
-  (when (file-exists-p (expand-file-name "~/.config/sburl/config.gpg"))
+  (when (file-exists-p (expand-file-name "~/.config/sburl/pat.gpg"))
     (epa-decrypt-file (expand-file-name "~/.config/sburl/pat.gpg")
                       (expand-file-name "~/.config/sburl/pat")))
   (with-temp-buffer
