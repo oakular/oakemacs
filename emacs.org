@@ -94,7 +94,7 @@
 * Theme
 #+BEGIN_SRC emacs-lisp
   (defun oak/setup-fonts () "Setup basic font configuration."
-         (let ((monospace-font "Cascadia Mono-8"))
+         (let ((monospace-font "Cascadia Mono PL-9"))
            (set-face-attribute 'default nil :font monospace-font)
            (set-face-attribute 'fixed-pitch nil :font monospace-font))
            (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
@@ -525,15 +525,18 @@ Org capture is used here to quickly create tasks, and refile them.
   (setq org-default-notes-file oak-org-journal-file)
 
   (setq org-capture-templates
-        '(("t" "Todo" entry
+        `(("t" "Todo" entry
            (file+headline oak-org-journal-file "Captures")
            "* TODO %?\n %a")
-          ("d" "Deferred Purchases" entry
+          ("p" "Deferred Purchases" entry
            (file+olp oak-org-journal-file "Finance" "Deferred Purchases")
            "* %?\n DEADLINE: %^U")
           ("r" "Reminder" entry
            (file+headline oak-org-journal-file "Reminders")
-           "* %?\n %^T\n %a")))
+           "* %?\n %^T\n %a")
+           ("d" "Diary" entry
+            (file+olp+datetree ,(concat org-directory "diary.org.gpg"))
+            "* %?")))
 #+END_SRC
 ** Custom org functions
 #+begin_src emacs-lisp
@@ -586,6 +589,14 @@ Org capture is used here to quickly create tasks, and refile them.
           ("2" "Q2" tags-todo "+important-urgent")
           ("3" "Q3" tags-todo "-important+urgent")
           ("4" "Q4" tags-todo "-important-urgent")))
+#+END_SRC
+* Accounting
+Ledger provides a plain text format for double entry bookkeeping. This
+ensures portability and longevity of data stored through ledger.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ledger-mode
+    :mode "\\.ledger\\'")
 #+END_SRC
 * Encryption
 Asymmetric encryption of personal files is a valid goal. One cannot
