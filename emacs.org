@@ -218,6 +218,7 @@ screen real estate.
 #+begin_src emacs-lisp
   (setq which-func-modes '(csharp-mode org-mode web-mode vue-web-mode js2-mode emacs-lisp-mode))
   (setq which-func-unknown "Outside function")
+  (which-function-mode)
 #+end_src
 * Evil                                                              :ARCHIVE:
     Define Evil global keybindings and initialize the mode.
@@ -596,7 +597,7 @@ Org capture is used here to quickly create tasks, and refile them.
 #+begin_src emacs-lisp
   (require 'ox-publish)
 
-  (setq org-publish-project-alist (lsit
+  (setq org-publish-project-alist (list
                                    (list "site-org"
                                          :base-directory "."
                                          :base-extension "org"
