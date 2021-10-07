@@ -94,7 +94,7 @@
 * Theme
 #+BEGIN_SRC emacs-lisp
   (defun oak/setup-fonts () "Setup basic font configuration."
-         (let ((monospace-font "Cascadia Mono PL-9"))
+         (let ((monospace-font "Cascadia Mono-8"))
            (set-face-attribute 'default nil :font monospace-font)
            (set-face-attribute 'fixed-pitch nil :font monospace-font))
            (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
@@ -590,6 +590,32 @@ Org capture is used here to quickly create tasks, and refile them.
           ("3" "Q3" tags-todo "-important+urgent")
           ("4" "Q4" tags-todo "-important-urgent")))
 #+END_SRC
+** COMMENT Blog
+#+begin_src emacs-lisp
+  (add-to-list 'org-publish-project-alist (list "site-org"
+                                                 :base-directory "."
+                                                 :base-extension "org"
+                                                 :recursive t
+                                                 :publishing-function 'org-html-publish-to-html
+                                                 :publishing-directory "./public"
+                                                 :exclude (regexp-opt '("README" "draft" "template"))
+                                                 :auto-sitemap t
+                                                 :sitemap-style 'list
+                                                 :sitemap-filename "map.org"
+                                                 :sitemap-file-entry-format "%d *%t*"
+                                                 :sitemap-sort-files 'anti-chronologically))
+
+  (add-to-list 'org-publish-project-alist (list "site-static"
+                                                 :base-directory "."
+                                                 :exclude "public/"
+                                                 :base-extension (regexp-opt '("jpg" "jpeg" "gif" "png" "svg" "json" "xml"
+                                                                                "ico" "cur" "css" "js" "woff" "html" "pdf"))
+                                                 :publishing-directory "./public"
+                                                 :publishing-function 'org-publish-attachment
+                                                 :recursive t))
+
+  (add-to-list 'org-publish-project-alist (list "site" :components '("site-org" "site-static")))
+#+end_src
 * Accounting
 Ledger provides a plain text format for double entry bookkeeping. This
 ensures portability and longevity of data stored through ledger.
@@ -675,6 +701,7 @@ box, and no one outside its maintainers know what is really going on.
   (setq shr-cookie-policy nil)
   (setq shr-use-colors nil)
   (setq shr-discard-aria-hidden t)
+  (setq shr-max-image-proportion 0.6)
   (setq eww-header-line-format "%u - %t")
 
   (setq url-cookie-untrusted-urls '(".*"))
