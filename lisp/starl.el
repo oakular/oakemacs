@@ -1,6 +1,7 @@
 (require 'sburl)
 (require 'org)
 (require 'url)
+(require 'oak-shell)
 
 (defvar starl-default-account-name nil)
 
@@ -35,6 +36,25 @@
   (display-buffer
    (starl/format-transactions-for-display
     (starl/get-transactions))))
+
+(defun starl/import-transactions-to-ledger ()
+  "Import the transactions for the account and date range prompted for to the file at the LEDGER_FILE envvar."
+  (interactive)
+  (with-current-buffer
+      (starl/format-transactions-for-ledger (starl/get-transactions))
+    (let ((transactions-location "/tmp/starl-transaction-download.csv"))
+      (write-file transactions-location)
+      (shell-command (oak/build-shell-cmd (list "ledger"
+                                                "convert"
+                                                transactions-location
+                                                "--input-date-format \"%d/%m/%Y\""
+                                                "--invert"
+                                                "--account Assets:Current:Joint"
+                                                "--file $LEDGER_FILE"
+                                                "--now=2021/09/27"
+                                                "--rich-data"
+                                                ">> $LEDGER_FILE")))
+      (kill-buffer))))
 
 (provide 'starl)
 

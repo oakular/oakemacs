@@ -10,6 +10,4 @@
   "Build a command string from the elements passed as parameter."
   (mapconcat 'identity cmd-elements " "))
 
-(oak/define-global-keymap '("C-x tt" . oak/term))
-
 (provide 'oak-shell)

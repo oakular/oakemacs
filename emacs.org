@@ -206,7 +206,7 @@ screen real estate.
           ("\\*.*\\(e?shell\\|v?term\\|ansi-term\\).*"
            (display-buffer-reuse-mode-window display-buffer-at-bottom)
            (window-height . 0.2))
-          ("^\\(magit:\\|*vc-dir\\).*"
+          ("^\\(magit:\\|*vc-dir\\|*Ledger Report\\).*"
            (display-buffer-in-side-window)
            (side . right)
            (window-width . 0.40))))
@@ -596,7 +596,12 @@ ensures portability and longevity of data stored through ledger.
 
 #+BEGIN_SRC emacs-lisp
   (use-package ledger-mode
-    :mode "\\.ledger\\'")
+    :mode "\\.ledger\\'"
+    :config
+    (setq ledger-reports '(("monthly expenses" "ledger -b %(start-date) -e %(end-date) -S T bal ^Expenses or ^Liabilities")
+                           ("balance" "%(binary) -f %(ledger-file) bal")
+                           ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
+                           ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
 #+END_SRC
 * Encryption
 Asymmetric encryption of personal files is a valid goal. One cannot
@@ -639,6 +644,7 @@ box, and no one outside its maintainers know what is really going on.
 #+begin_src emacs-lisp
   (require 'eshell)
   (oak/define-global-keymap '("C-x te" . eshell))
+  (oak/define-global-keymap '("C-x tt" . oak/term))
   ;; (oak/define-mode-keymap eshell-mode-map '("M-l" . eshell/clear))
 #+end_src
 ** Commands
@@ -673,7 +679,7 @@ box, and no one outside its maintainers know what is really going on.
 
   (setq url-cookie-untrusted-urls '(".*"))
   (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
-  (setq eww-bookmarks-directory (expand-file-name (concat user-emacs-directory "eww/bookmarks")))
+  (setq eww-bookmarks-directory (expand-file-name (concat user-emacs-directory "eww/")))
   (setq eww-history-limit 300)
   (setq eww-browse-url-new-window-is-tab nil)
 
@@ -683,4 +689,9 @@ box, and no one outside its maintainers know what is really going on.
 #+BEGIN_SRC emacs-lisp
 (require 'oak-youtube-dl)
 #+END_SRC
+* Calculator
+#+begin_src emacs-lisp
+  (add-hook 'calc-mode-hook #'(lambda ()
+                                (setq calc-display-trail nil)))
+#+end_src
 
