@@ -25,6 +25,7 @@
     (setq-default indent-tabs-mode nil)
     (save-place-mode 1)
     (setq visible-bell t)
+    (setq confirm-kill-emacs 'yes-or-no-p)
 
     (defun oak/reload-config () "Reloads the configuration."
            (interactive)
@@ -119,11 +120,13 @@
   (defun oak/load-dark-theme ()
     (interactive)
     (setq modus-themes-syntax 'faint)
+    (setq modus-themes-region '(accented no-extend))
     (load-theme oak-dark-theme t))
 
   (defun oak/load-light-theme ()
     (interactive)
     (setq modus-themes-syntax 'alt-syntax)
+    (setq modus-themes-region '(bg-only accented no-extend))
     (load-theme oak-light-theme t))
 
   (oak/setup-fonts)
@@ -158,6 +161,7 @@ Use variable pitch mode in Info buffers.
                           ("s-w" . eww))))
            (oak/define-global-keymaps keymaps)))
 
+  (oak/define-global-keymap '("M-SPC" . cycle-spacing))
   (oak/global-keymaps)
 #+end_src
 ** Windows
@@ -171,13 +175,20 @@ we mainly try to impose *nix patterns on the Window environment.
 #+END_SRC
 * Completion
 #+begin_src emacs-lisp
+  (oak-common/use-package 'icomplete-vertical)
+  (icomplete-mode 1)
+  (setq icomplete-compute-delay 0)
+  (setq icomplete-hide-common-prefix t)
+  (setq icomplete-prospects-height 1)
+  (setq icomplete-in-buffer t)
+
   (use-package orderless
     :demand t
     :config
     (setq completion-ignore-case
           read-buffer-completion-ignore-case
           read-file-name-completion-ignore-case t)
-    (setq completion-styles '(orderless)))
+    (setq completion-styles '(substring initials flex partial-completion orderless)))
 #+end_src
 * Window Management
 We define some rules about how certain buffers should appear.  This is
@@ -203,13 +214,23 @@ screen real estate.
            (window-height . 0.33)
            (side . bottom)
            (slot . 1))
+          ("\\*eww buffers\\*"
+           (display-buffer-in-side-window)
+           (window-height . 0.33)
+           (side . top)
+           (slot . 1))
           ("\\*.*\\(e?shell\\|v?term\\|ansi-term\\).*"
            (display-buffer-reuse-mode-window display-buffer-at-bottom)
            (window-height . 0.2))
           ("^\\(magit:\\|*vc-dir\\|*Ledger Report\\).*"
            (display-buffer-in-side-window)
            (side . right)
-           (window-width . 0.40))))
+           (window-width . 0.40))
+          ("\\*Org Select\\*"
+           (display-buffer-in-side-window)
+           (side . right)
+           (window-width . 0.30))))
+
 
   (add-hook 'help-mode-hook #'visual-line-mode)
   (add-hook 'vc-dir-mode-hook #'visual-line-mode)
@@ -489,7 +510,8 @@ Sane org defaults
     (setq org-tags-column -80) ;; flush tags on the 80th column
     (add-to-list 'org-modules 'org-habit)
     (setq org-habit-show-habits-only-for-today nil)
-  
+
+    (oak/define-global-keymap '("C-c ob" . org-switchb))
   #+END_SRC
 ** Source block configuration
 #+BEGIN_SRC emacs-lisp
@@ -531,6 +553,9 @@ Org capture is used here to quickly create tasks, and refile them.
         `(("t" "Todo" entry
            (file+headline oak-org-journal-file "Captures")
            "* TODO %?\n %a")
+          ("p" "Project" entry
+           (file+headline oak-org-journal-file "Projects")
+           "* PROJ %?\n %a %u")
           ("p" "Deferred Purchases" entry
            (file+olp oak-org-journal-file "Finance" "Deferred Purchases")
            "* %?\n DEADLINE: %^U")
@@ -593,17 +618,19 @@ Org capture is used here to quickly create tasks, and refile them.
           ("3" "Q3" tags-todo "-important+urgent")
           ("4" "Q4" tags-todo "-important-urgent")))
 #+END_SRC
-** Blog
+** COMMENT Blog
 #+begin_src emacs-lisp
   (require 'ox-publish)
 
+  (setq oak-blog-directory (expand-file-name "~/Documents/src/blog"))
+
   (setq org-publish-project-alist (list
                                    (list "site-org"
-                                         :base-directory "."
+                                         :base-directory oak-blog-directory
                                          :base-extension "org"
                                          :recursive t
                                          :publishing-function 'org-html-publish-to-html
-                                         :publishing-directory "./public"
+                                         :publishing-directory (concat oak-blog-directory "/public")
                                          :exclude (regexp-opt '("README" "draft" "template"))
                                          :auto-sitemap t
                                          :sitemap-style 'list
@@ -611,11 +638,11 @@ Org capture is used here to quickly create tasks, and refile them.
                                          :sitemap-file-entry-format "%d *%t*"
                                          :sitemap-sort-files 'anti-chronologically)
                                    (list "site-static"
-                                         :base-directory "."
+                                         :base-directory oak-blog-directory
                                          :exclude "public/"
                                          :base-extension (regexp-opt '("jpg" "jpeg" "gif" "png" "svg" "json" "xml"
                                                                        "ico" "cur" "css" "js" "woff" "html" "pdf"))
-                                         :publishing-directory "./public"
+                                         :publishing-directory (concat oak-blog-directory "/public")
                                          :publishing-function 'org-publish-attachment
                                          :recursive t)
                                    (list "site" :components '("site-org" "site-static"))))
@@ -702,6 +729,7 @@ box, and no one outside its maintainers know what is really going on.
 #+end_src
 * Web browsing
 #+BEGIN_SRC emacs-lisp
+  (setq browse-url-browser-function 'eww-browse-url)
   (setq shr-cookie-policy nil)
   (setq shr-use-colors nil)
   (setq shr-discard-aria-hidden t)
@@ -713,7 +741,6 @@ box, and no one outside its maintainers know what is really going on.
   (setq eww-bookmarks-directory (expand-file-name (concat user-emacs-directory "eww/")))
   (setq eww-history-limit 300)
   (setq eww-browse-url-new-window-is-tab nil)
-
 #+END_SRC
 * Media
 ** Podcast/Video Downloads
