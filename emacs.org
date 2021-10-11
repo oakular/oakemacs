@@ -101,36 +101,40 @@
            (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
                  (set-face-attribute 'variable-pitch nil :font "Free Sans-10")))
 
-  (use-package modus-themes
-    :ensure t
-    :demand
-    :pin gnu
-    :config
-    (setq modus-themes-paren-match 'subtle-bold)
-    (setq modus-themes-mode-line '3d)
-    (setq modus-themes-org-agenda '((header-block . (variable-pitch scale-title))
-                                    (header-date . (workaholic bold-today))
-                                    (habit . simplified)))
-    ;; (setq modus-themes-bold-constructs t)
-    (load-theme 'modus-operandi t))
+  (oak-common/use-package 'modus-themes)
 
-  (defvar oak-dark-theme 'modus-vivendi)
-  (defvar oak-light-theme 'modus-operandi)
+  ;; (setq modus-themes-bold-constructs t)
+  (load-theme 'modus-operandi t)
+  (setq modus-themes-paren-match 'subtle-bold)
+  (setq modus-themes-mode-line '3d)
+  (setq modus-themes-org-agenda '((header-block . (variable-pitch scale-title))
+                                  (header-date . (workaholic bold-today))
+                                  (habit . simplified)))
 
-  (defun oak/load-dark-theme ()
-    (interactive)
+  (defvar oak-theme-dark 'modus-vivendi)
+  (defvar oak-theme-light 'modus-operandi)
+
+  (defun oak-theme/load-dark ()
     (setq modus-themes-syntax 'faint)
     (setq modus-themes-region '(accented no-extend))
-    (load-theme oak-dark-theme t))
+    (load-theme oak-theme-dark t))
 
-  (defun oak/load-light-theme ()
-    (interactive)
+  (defun oak-theme/load-light ()
     (setq modus-themes-syntax 'alt-syntax)
     (setq modus-themes-region '(bg-only accented no-extend))
-    (load-theme oak-light-theme t))
+    (load-theme oak-theme-light t))
+
+  (defun oak-theme/toggle ()
+    "Toggle the active theme between dark and light."
+    (interactive)
+    (if
+        (string-equal (modus-themes--current-theme)
+                      oak-theme-light)
+      (oak-theme/load-dark)
+      (oak-theme/load-light)))
 
   (oak/setup-fonts)
-  (oak/load-light-theme)
+  (oak-theme/load-dark)
 #+END_SRC
 
 Use variable pitch mode in Info buffers.
@@ -154,9 +158,8 @@ Use variable pitch mode in Info buffers.
          (dolist (keymap keymaps) (oak/define-global-keymap keymap) nil))
 
   (defun oak/global-keymaps () "Enables all global keymaps."
-         (let ((keymaps '(("C-x cr" . oak/reload-config)
-                          ("C-x ctd" . oak/load-dark-theme)
-                          ("C-x ctl" . oak/load-light-theme)
+         (let ((keymaps '(("C-c er" . oak/reload-config)
+                          ("C-c et" . oak-theme/toggle)
                           ("C-x g" . gnus)
                           ("s-w" . eww))))
            (oak/define-global-keymaps keymaps)))
