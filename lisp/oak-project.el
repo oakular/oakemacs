@@ -7,6 +7,7 @@
 
 (defun oak-project/configure ()
   "Setup project.el."
+  (oak/define-global-keymap '("C-x p C" . oak-project/do-run-project))
   (add-to-list 'project-switch-commands '(magit-status "Magit status"))
   (setq project-prefix-map '(keymap
                              (120 . project-execute-extended-command)
@@ -49,12 +50,6 @@
 (defun oak-project/do-run-project ()
   "Run the current project using the defined oak-project-run-command."
   (interactive)
-  (oak/exec-fun-project-root
-   (compile
-    (if (eq (read-multiple-choice "Run or compile: "
-                                  '((?c "compile")
-                                    (?r "run"))) "compile")
-        (compile)
-      (compile oak-project-run-command)))))
+  (compile oak-project-run-command))
 
 (provide 'oak-project)
