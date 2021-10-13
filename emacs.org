@@ -58,9 +58,6 @@
             package--init-file-ensured t
             package-enable-at-startup nil)
 
-      (setq oak-lisp-path (expand-file-name (concat user-emacs-directory "lisp")))
-      (add-to-list 'load-path oak-lisp-path)
-
       (unless (file-directory-p package-user-dir)
         (make-directory package-user-dir t)))
 
@@ -85,12 +82,10 @@
         (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t))
 
       (package-initialize)
-      (oak-common/use-package 'use-package)
-
-      (require 'use-package)
-      (setq use-package-always-ensure t
-            use-package-always-defer t
-            use-package-verbose t))
+      (oak-package/require 'use-package
+                           (setq use-package-always-ensure t
+                                 use-package-always-defer t
+                                 use-package-verbose t)))
   #+END_SRC
 * Theme
 #+BEGIN_SRC emacs-lisp
@@ -101,15 +96,12 @@
            (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
                  (set-face-attribute 'variable-pitch nil :font "Free Sans-10")))
 
-  (oak-common/use-package 'modus-themes)
-
-  ;; (setq modus-themes-bold-constructs t)
-  (load-theme 'modus-operandi t)
-  (setq modus-themes-paren-match 'subtle-bold)
-  (setq modus-themes-mode-line '3d)
-  (setq modus-themes-org-agenda '((header-block . (variable-pitch scale-title))
-                                  (header-date . (workaholic bold-today))
-                                  (habit . simplified)))
+  (oak-package/require 'modus-themes
+                       (setq modus-themes-paren-match 'subtle-bold)
+                       (setq modus-themes-mode-line '3d)
+                       (setq modus-themes-org-agenda '((header-block . (variable-pitch scale-title))
+                                                       (header-date . (workaholic bold-today))
+                                                       (habit . simplified))))
 
   (defvar oak-theme-dark 'modus-vivendi)
   (defvar oak-theme-light 'modus-operandi)
@@ -178,20 +170,23 @@ we mainly try to impose *nix patterns on the Window environment.
 #+END_SRC
 * Completion
 #+begin_src emacs-lisp
-  (oak-common/use-package 'icomplete-vertical)
-  (icomplete-mode 1)
-  (setq icomplete-compute-delay 0)
-  (setq icomplete-hide-common-prefix t)
-  (setq icomplete-prospects-height 1)
-  (setq icomplete-in-buffer t)
+  (oak-package/require 'icomplete-vertical
+                       (icomplete-mode 1)
+                       (setq icomplete-compute-delay 0)
+                       (setq icomplete-hide-common-prefix t)
+                       (setq icomplete-prospects-height 1)
+                       (setq icomplete-in-buffer t))
 
-  (use-package orderless
-    :demand t
-    :config
-    (setq completion-ignore-case
-          read-buffer-completion-ignore-case
-          read-file-name-completion-ignore-case t)
-    (setq completion-styles '(substring initials flex partial-completion orderless)))
+  (oak-package/require
+   'orderless
+   (setq completion-ignore-case
+         read-buffer-completion-ignore-case
+         read-file-name-completion-ignore-case t)
+   (setq completion-styles '(substring
+                             initials
+                             flex
+                             partial-completion
+                             orderless)))
 #+end_src
 * Window Management
 We define some rules about how certain buffers should appear.  This is
@@ -244,49 +239,6 @@ screen real estate.
   (setq which-func-unknown "Outside function")
   (which-function-mode)
 #+end_src
-* Evil                                                              :ARCHIVE:
-    Define Evil global keybindings and initialize the mode.
-    #+BEGIN_SRC emacs-lisp
-      (defun oak/evil-global-keys () "Defines global keybindings using Evil mode."
-          (evil-set-leader 'normal (kbd "SPC"))
-          (defconst keymaps '(("w" . save-buffer)
-                              ("ff" . find-file)
-                              ("bd" . kill-buffer)
-                              ("bb" . switch-to-buffer)
-                              ("." . dired)
-                              ("oa" . org-agenda)
-                              ("rc" . oak/reload-config)
-                              ("dP" . oak/open-config)))
-
-          (oak/define-leader-keymaps keymaps))
-
-      (defun oak/define-leader-keymap (keymap) "Defines a leader keymap for the keymap pairing given."
-             (evil-define-key 'normal 'global (kbd (concat "<leader>" (car keymap))) (cdr keymap)))
-
-      (defun oak/define-leader-keymaps (keymaps) "Defines a set of leader keymaps for the keymap pairings given."
-           (dolist (keymap keymaps) (oak/define-leader-keymap keymap) nil))
-
-      ;; (use-package evil
-      ;;     :ensure t
-      ;;     :defer nil
-      ;;     :init
-      ;;     (setq evil-want-keybinding nil)
-      ;;     ;; (evil-mode 1)
-      ;;     :config
-      ;;     (oak/evil-global-keys)
-      ;;     (setq evil-search-wrap t evil-regexp-search t))
-
-      ;; (use-package evil-collection :after (evil))
-    #+END_SRC
-
-    Some evil plugins
-    #+BEGIN_SRC emacs-lisp
-      (use-package evil-commentary
-          :ensure t
-          :after (evil)
-          :init
-          (evil-commentary-mode))
-    #+END_SRC
 * Dired
 #+begin_src emacs-lisp
   (defun oak/dired-detailed () "Format dired with detailed listings."
@@ -310,27 +262,18 @@ Use the elisp =ls= implementation.
 #+end_src
 * Version Control
 #+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :ensure t
-    :commands (magit-status magit-blame magit-log-buffer-file magit-log-all)
-    :init
-    (oak/define-global-keymap '("C-x vb" . magit-blame))
-    (oak/define-global-keymap '("C-x vS" . magit-status))
-    (oak/define-global-keymap '("C-x vc" . magit-commit)))
+  (oak-package/require 'magit
+                       (oak/define-global-keymap '("C-x vb" . magit-blame))
+                       (oak/define-global-keymap '("C-x vS" . magit-status))
+                       (oak/define-global-keymap '("C-x vc" . magit-commit)))
 
-  (use-package vc
-    :pin gnu
-    :commands (vc-dir vc-log-outgoing vc-log-incoming vc-annotate))
+  (oak-package/require-local 'vc)
 
 #+END_SRC
 * Project Management
 #+begin_src emacs-lisp
-  (require 'oak-project)
-
-  (use-package project
-    :demand
-    :pin gnu
-    :config
+  (oak-package/require-local 'project
+    (oak-package/require-local 'oak-project)
     (oak-project/configure))
 #+end_src
 * Software Development
@@ -356,7 +299,7 @@ code was retrieved from [[https://raw.githubusercontent.com/ptrv/emacs.d/master/
 is installed on your machine.
 
 #+BEGIN_SRC emacs-lisp
-(require 'gud-lldb)
+(oak-package/require-local 'gud-lldb)
 #+END_SRC
 ** Eglot
 The backbone of support for software development
@@ -377,7 +320,7 @@ The backbone of support for software development
 #+end_src
 ** REST Client
 #+begin_src emacs-lisp
-(use-package restclient)
+(oak-package/require 'restclient)
 #+end_src
 ** Markdown
 #+begin_src emacs-lisp
@@ -429,9 +372,7 @@ The backbone of support for software development
   #+END_SRC
 ** Csv
 #+begin_src emacs-lisp
-  (use-package csv-mode
-    :pin gnu
-    :config
+  (oak-package/require-local 'csv-mode
     (add-to-list 'auto-mode-alist '("\\.csv\\'" . csv-mode)))
 #+end_src
 ** Javascript

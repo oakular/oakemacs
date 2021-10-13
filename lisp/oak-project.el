@@ -2,7 +2,7 @@
 
 (require 'project)
 
-(defvar oak-project-run-command nil
+(defcustom oak-project-run-command nil
   "The command to execute when running a project.")
 
 (defun oak-project/configure ()
