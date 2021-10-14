@@ -93,8 +93,8 @@
          (let ((monospace-font "Cascadia Mono-8"))
            (set-face-attribute 'default nil :font monospace-font)
            (set-face-attribute 'fixed-pitch nil :font monospace-font))
-           (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
-                 (set-face-attribute 'variable-pitch nil :font "Free Sans-10")))
+         (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
+           (set-face-attribute 'variable-pitch nil :font "Free Sans-10")))
 
   (oak-package/require 'modus-themes
                        (setq modus-themes-paren-match 'subtle-bold)
@@ -103,30 +103,35 @@
                                                        (header-date . (workaholic bold-today))
                                                        (habit . simplified))))
 
+  (defvar oak-theme-current nil)
   (defvar oak-theme-dark 'modus-vivendi)
   (defvar oak-theme-light 'modus-operandi)
 
   (defun oak-theme/load-dark ()
     (setq modus-themes-syntax 'faint)
     (setq modus-themes-region '(accented no-extend))
-    (load-theme oak-theme-dark t))
+    (load-theme oak-theme-dark t)
+    (setq-local oak-theme-current oak-theme-dark))
 
   (defun oak-theme/load-light ()
     (setq modus-themes-syntax 'alt-syntax)
     (setq modus-themes-region '(bg-only accented no-extend))
-    (load-theme oak-theme-light t))
+    (load-theme oak-theme-light t)
+    (setq-local oak-theme-current oak-theme-light))
 
   (defun oak-theme/toggle ()
     "Toggle the active theme between dark and light."
     (interactive)
     (if
-        (string-equal (modus-themes--current-theme)
+        (string-equal oak-theme-current
                       oak-theme-light)
-      (oak-theme/load-dark)
+        (oak-theme/load-dark)
       (oak-theme/load-light)))
 
+  (when (eq oak-theme-current nil)
+    (oak-theme/load-dark))
+
   (oak/setup-fonts)
-  (oak-theme/load-dark)
 #+END_SRC
 
 Use variable pitch mode in Info buffers.
@@ -562,11 +567,11 @@ Org capture is used here to quickly create tasks, and refile them.
           ("3" "Q3" tags-todo "-important+urgent")
           ("4" "Q4" tags-todo "-important-urgent")))
 #+END_SRC
-** COMMENT Blog
+** Blog
 #+begin_src emacs-lisp
   (require 'ox-publish)
 
-  (setq oak-blog-directory (expand-file-name "~/Documents/src/blog"))
+  (setq oak-blog-directory (expand-file-name "~/Documents/src/site/blog"))
 
   (setq org-publish-project-alist (list
                                    (list "site-org"
