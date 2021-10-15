@@ -8,14 +8,18 @@
 
 (defconst oak-dotnet-process-name-as-buffer-name (concat "*" oak-dotnet-process-name "*"))
 
-(defvar oak-dotnet-migration-project nil
-  "The project directory (relative or absolute) containing project migrations.")
+(defcustom oak-dotnet-migration-project nil
+  "The project directory (relative or absolute) containing project migrations."
+  :safe 'stringp)
 
-(defvar oak-dotnet-startup-project nil
-  "The startup project directory, to be ran when executing a solution.")
+(defcustom oak-dotnet-startup-project nil
+  "The startup project directory, to be ran when executing a solution."
+  :safe 'stringp)
 
-(defvar oak-dotnet-prompt-for-context nil
-  "Determine whether the user should be prompted for the context name when running migration commands.")
+(defcustom oak-dotnet-prompt-for-context nil
+  "Determine whether the user should be prompted for the context name when running migration commands."
+  :type 'boolean
+  :safe (lambda (x) (or (eq x 't) (eq x nil))))
 
 (defun oak-dotnet/get-migration-project ()
   "Gets the migration project if set as a variable, and fallsback to user input."
@@ -121,12 +125,13 @@
 
 (defun oak-dotnet/add-package (project package-name)
   "Add the given package to the given project."
-  (oak/shell-command-project-root
-   (oak/build-shell-cmd
-    (list oak-dotnet-command "add"
-          project
-          "package"
-          package-name))))
+  (oak/make-process-project-root
+   :name (concat oak-dotnet-process-name "-add-package")
+   :buffer oak-dotnet-process-name-as-buffer-name
+   :command (list oak-dotnet-command "add"
+                  project
+                  "package"
+                  package-name)))
 
 (defun oak-dotnet/remove-package (project package-name)
   "Remove the given package from the given project."
@@ -140,15 +145,17 @@
 (defun oak-dotnet/do-add-package ()
   "Add a package to a project."
   (interactive)
-  (oak/exec-fun-project-root
-   (oak-dotnet/add-package (read-directory-name "Project: ")
-                           (read-string "Package: "))))
+  (oak-common/run-function-display-buffer
+   (lambda ()
+     (oak-dotnet/add-package (read-string "Project: ")
+                             (read-string "Package: ")))
+   oak-dotnet-process-name-as-buffer-name))
 
 (defun oak-dotnet/do-remove-package ()
   "Remove a package from a project."
   (interactive)
   (oak/exec-fun-project-root
-   (oak-dotnet/remove-package (read-directory-name "Project: ")
+   (oak-dotnet/remove-package (read-string "Project: ")
                               (read-string "Package: "))))
 
 (defun oak-dotnet/clean-project ()

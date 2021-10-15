@@ -3,7 +3,8 @@
 (require 'project)
 
 (defcustom oak-project-run-command nil
-  "The command to execute when running a project.")
+  "The command to execute when running a project."
+  :safe 'stringp)
 
 (defun oak-project/configure ()
   "Setup project.el."
