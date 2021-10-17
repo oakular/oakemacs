@@ -488,6 +488,7 @@ Sane org defaults
     (setq org-agenda-use-time-grid nil)
     (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 4))
     (setq org-agenda-follow-indirect t)
+    (setq org-agenda-use-time-grid t)
 
     (oak/define-global-keymap '("C-c oa" . org-agenda))
     (oak/define-global-keymap '("C-c c" . org-capture))
