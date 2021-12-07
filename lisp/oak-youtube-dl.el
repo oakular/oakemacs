@@ -2,7 +2,7 @@
 
 (require 'oak-shell)
 
-(defconst oak-youtube-dl-executable "youtube-dl")
+(defconst oak-youtube-dl-executable "yt-dlp")
 
 (defun oak/read-url ()
   (read-string "URL: "))

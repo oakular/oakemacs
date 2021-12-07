@@ -51,7 +51,6 @@
                                                 "--invert"
                                                 "--account Assets:Current:Joint"
                                                 "--file $LEDGER_FILE"
-                                                "--now=2021/09/27"
                                                 "--rich-data"
                                                 ">> $LEDGER_FILE")))
       (kill-buffer))))

@@ -26,6 +26,7 @@
     (save-place-mode 1)
     (setq visible-bell t)
     (setq confirm-kill-emacs 'yes-or-no-p)
+    (setq initial-major-mode 'org-mode)
 
     (defun oak/reload-config () "Reloads the configuration."
            (interactive)
@@ -45,7 +46,7 @@
     (oak/backup-init "backups")
 
     (defun oak/add-auto-mode (ext mode) "Appends to pairing parameter to the auto-mode alist"
-           (add-to-list 'auto-mode-alist '((concat "\\" ext "\\'") . mode)))
+           (add-to-list 'auto-mode-alist `(,(concat "\\" ext "\\'") . ,mode)))
 
   #+END_SRC
 * Package Management Setup
@@ -440,6 +441,11 @@ Nix provides use with the ability to create replicable development environments 
                                :height 1.5))
     (setq nov-text-width 80))
 #+end_src
+** PDFs
+#+begin_src emacs-lisp
+  (when (not WINDOWS)
+    (oak-package/require 'pdf-tools))
+#+end_src
 * Org
 Sane org defaults
   #+BEGIN_SRC emacs-lisp
@@ -447,6 +453,7 @@ Sane org defaults
       :pin org)
 
     (add-to-list 'org-modules 'org-tempo)
+
     (setq org-directory "~/org/org/")
     (setq oak-org-journal-file (concat org-directory "journal.org.gpg"))
     (setq org-archive-location (concat org-directory "archive/archive_%s::"))
@@ -518,39 +525,48 @@ Org capture is used here to quickly create tasks, and refile them.
 #+END_SRC
 ** Custom org functions
 #+begin_src emacs-lisp
-      (defun oak/org-find-file ()
-        "Find a file within the org-directory"
-        (interactive)
-        (let ((default-directory org-directory))
-          (find-file (read-file-name "Find org file: "))))
+  (defun oak/org-find-file ()
+    "Find a file within the org-directory"
+    (interactive)
+    (let ((default-directory org-directory))
+      (find-file (read-file-name "Find org file: "))))
 
-      (defun oak/org-agenda-file-name-to-pair (filename)
-        "Get the multple choice pairing for the filename passed as parameter."
-        (list (aref (file-name-nondirectory filename) 0) (file-name-nondirectory filename)))
+  (defun oak/org-agenda-file-name-to-pair (filename)
+    "Get the multple choice pairing for the filename passed as parameter."
+    (list (aref (file-name-nondirectory filename) 0) (file-name-nondirectory filename)))
 
-      (defun oak/org-get-agenda-file-choice ()
-        "Get the choices of agenda files."
-        (mapcar 'oak/org-agenda-file-name-to-pair org-agenda-files))
+  (defun oak/org-get-agenda-file-choice ()
+    "Get the choices of agenda files."
+    (mapcar 'oak/org-agenda-file-name-to-pair org-agenda-files))
 
-      (defun oak/org-find-agenda-file (filename)
-        "Find the agenda file passed as parameter."
-        (find-file (expand-file-name filename org-directory)))
+  (defun oak/org-find-agenda-file (filename)
+    "Find the agenda file passed as parameter."
+    (find-file (expand-file-name filename org-directory)))
 
-      (defun oak/org-choose-agenda-file ()
-        "Choose an agenda file to visit."
-        (interactive)
-        (let ((default-directory org-directory))
-          (oak/org-find-agenda-file (nth 1 (read-multiple-choice "Agenda file:"
-                                                               (oak/org-get-agenda-file-choice))))))
+  (defun oak/org-choose-agenda-file ()
+    "Choose an agenda file to visit."
+    (interactive)
+    (let ((default-directory org-directory))
+      (oak/org-find-agenda-file (nth 1 (read-multiple-choice "Agenda file:"
+                                                           (oak/org-get-agenda-file-choice))))))
 
-      (defun oak/org-sync ()
-        "Sync org directory with cloud storage."
-        (interactive)
-        (shell-command (if (not WINDOWS) "orgsync" "rclone sync C:\\Users\\VNA2\\org oakularorg:org")))
+  (defun oak/org-sync ()
+    "Sync org directory with cloud storage."
+    (interactive)
+    (shell-command (if (not WINDOWS) "orgsync" "rclone sync C:\\Users\\VNA2\\org oakularorg:org")))
 
-      (oak/define-global-keymap '("C-c of" . oak/org-find-file))
-      (oak/define-global-keymap '("C-c oF" . oak/org-choose-agenda-file))
-      (oak/define-global-keymap '("C-c os" . oak/org-sync))
+  (defun oak-org/preview-as-html ()
+    "Preview org file as HTML in the default browser."
+    (interactive)
+    (org-html-export-as-html)
+    (browse-url-of-buffer (get-buffer "*Org HTML Export*"))
+    (kill-buffer "*Org HTML Export*")
+    (other-window 1))
+
+  (oak/define-global-keymap '("C-c of" . oak/org-find-file))
+  (oak/define-global-keymap '("C-c oF" . oak/org-choose-agenda-file))
+  (oak/define-global-keymap '("C-c os" . oak/org-sync))
+  (oak/define-mode-keymap org-mode-map '("C-c p". oak-org/preview-as-html))
   #+end_src
 ** Refiling
 #+BEGIN_SRC emacs-lisp
@@ -598,18 +614,24 @@ Org capture is used here to quickly create tasks, and refile them.
                                    (list "site" :components '("site-org" "site-static"))))
 #+end_src
 * Accounting
+** Ledger
 Ledger provides a plain text format for double entry bookkeeping. This
 ensures portability and longevity of data stored through ledger.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ledger-mode
-    :mode "\\.ledger\\'"
-    :config
-    (setq ledger-reports '(("monthly expenses" "ledger -b %(start-date) -e %(end-date) -S T bal ^Expenses or ^Liabilities")
-                           ("balance" "%(binary) -f %(ledger-file) bal")
-                           ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
-                           ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
+  (oak-package/require 'ledger-mode)
+  (oak/add-auto-mode ".legder" 'ledger-mode)
+
+  (setq ledger-reports '(("monthly expenses" "ledger -b %(start-date) -e %(end-date) -S T bal ^Expenses or ^Liabilities")
+                         ("balance" "%(binary) -f %(ledger-file) bal")
+                         ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
+                         ("account" "%(binary) -f %(ledger-file) reg %(account)")))
 #+END_SRC
+** Gnuplot
+#+begin_src emacs-lisp
+(oak-package/require 'gnuplot-mode)
+(oak/add-auto-mode ".gnuplot" 'gnuplot-mode)
+#+end_src
 * Encryption
 Asymmetric encryption of personal files is a valid goal. One cannot
 trust the location they store their files to be secure, especially not
@@ -691,7 +713,7 @@ box, and no one outside its maintainers know what is really going on.
   (setq eww-bookmarks-directory (expand-file-name (concat user-emacs-directory "eww/")))
   (setq eww-history-limit 300)
   (setq eww-browse-url-new-window-is-tab nil)
-#+END_SRC
+#+END_SRCsudo apt-get clean
 * Media
 ** Podcast/Video Downloads
 #+BEGIN_SRC emacs-lisp
