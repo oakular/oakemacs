@@ -336,13 +336,14 @@ The backbone of support for software development
 #+end_src
 ** Web Mode
 #+begin_src emacs-lisp
-  (use-package web-mode
-    :mode "\\.cshtml\\'"
-    :config
-    (add-hook 'web-mode-hook #'hl-line-mode)
-    (add-hook 'web-mode-hook #'display-line-numbers-mode))
+  (oak-package/require 'web-mode)
 
-  (add-to-list 'auto-mode-alist  '("\\.css\\'" . web-mode))
+  (add-hook 'web-mode-hook #'hl-line-mode)
+  (add-hook 'web-mode-hook #'display-line-numbers-mode)
+
+  (oak/add-auto-mode ".css" 'web-mode)
+  (oak/add-auto-mode ".jsx" 'web-mode)
+  (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
 
   (use-package sass-mode
     :mode "\\.sass\\'"
