@@ -244,6 +244,11 @@ screen real estate.
   (setq which-func-modes '(csharp-mode org-mode web-mode vue-web-mode js2-mode emacs-lisp-mode))
   (setq which-func-unknown "Outside function")
   (which-function-mode)
+
+  (setq display-time-day-and-date t)
+  (setq display-time-format "%a %b %e %k:%M")
+  (setq display-time-24hr-format t)
+  (display-time-mode)
 #+end_src
 * Dired
 #+begin_src emacs-lisp
