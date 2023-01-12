@@ -461,7 +461,10 @@ Sane org defaults
     (add-to-list 'org-modules 'org-tempo)
 
     (setq org-directory "~/org/org/")
-    (setq oak-org-journal-file (concat org-directory "journal.org.gpg"))
+    (setq oak-org-journal-file (concat org-directory "journal.org"))
+    (setq oak-org-inbox-file (concat org-directory "inbox.org"))
+    (setq oak-org-maybe-file (concat org-directory "maybe.org"))
+    (setq oak-org-tickler-file (concat org-directory "tickler.org"))
     (setq org-archive-location (concat org-directory "archive/archive_%s::"))
     (setq org-startup-with-latex-preview t)
     (setq org-startup-indented t)
@@ -470,8 +473,6 @@ Sane org defaults
     (setq org-special-ctrl-a t)
     (setq org-special-ctrl-k t)
     (setq org-tags-column -80) ;; flush tags on the 80th column
-    (add-to-list 'org-modules 'org-habit)
-    (setq org-habit-show-habits-only-for-today nil)
 
     (oak/define-global-keymap '("C-c ob" . org-switchb))
   #+END_SRC
@@ -514,20 +515,17 @@ Org capture is used here to quickly create tasks, and refile them.
 
   (setq org-capture-templates
         `(("t" "Todo" entry
-           (file+headline oak-org-journal-file "Captures")
+           (file+headline oak-org-inbox-file "Captures")
            "* TODO %?\n %a")
+          ("T" "Tickler" entry
+           (file+headline oak-org-tickler-file "Tickler")
+           "* %i%? \n %U")
           ("p" "Project" entry
            (file+headline oak-org-journal-file "Projects")
-           "* PROJ %?\n %a %u")
-          ("p" "Deferred Purchases" entry
-           (file+olp oak-org-journal-file "Finance" "Deferred Purchases")
-           "* %?\n DEADLINE: %^U")
+           "* %?\n %a %u")
           ("r" "Reminder" entry
            (file+headline oak-org-journal-file "Reminders")
-           "* %?\n %^T\n %a")
-           ("d" "Diary" entry
-            (file+olp+datetree ,(concat org-directory "diary.org.gpg"))
-            "* %?")))
+           "* %?\n %^T\n %a")))
 #+END_SRC
 ** Custom org functions
 #+begin_src emacs-lisp
