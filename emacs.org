@@ -473,6 +473,7 @@ Sane org defaults
     (setq org-special-ctrl-a t)
     (setq org-special-ctrl-k t)
     (setq org-tags-column -80) ;; flush tags on the 80th column
+    (setq org-todo-keywords '((sequence "TODO(t)" "HOLD(h)" "|" "DONE(d)" "CANCELLED(c)")))
 
     (oak/define-global-keymap '("C-c ob" . org-switchb))
   #+END_SRC
@@ -488,8 +489,9 @@ Sane org defaults
 ** Org agenda configuration.
   #+BEGIN_SRC emacs-lisp
     (setq org-agenda-files (list
+                            oak-org-inbox-file
                             oak-org-journal-file
-                            (concat org-directory "work.org.gpg")))
+                            oak-org-tickler-file))
 
     (setq org-agenda-span 1)
     (setq org-agenda-window-setup 'other-window)
@@ -574,9 +576,7 @@ Org capture is used here to quickly create tasks, and refile them.
   #+end_src
 ** Refiling
 #+BEGIN_SRC emacs-lisp
-  (setq org-refile-use-outline-path t)
-
-  (setq org-refile-targets '((oak-org-journal-file :maxlevel . 3)
+  (setq org-refile-targets '((oak-org-journal-file :maxlevel . 2)
                              (oak-org-maybe-file :level . 1)
                              (oak-org-tickler-file :maxlevel . 2)))
 #+END_SRC
