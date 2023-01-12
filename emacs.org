@@ -91,7 +91,7 @@
 * Theme
 #+BEGIN_SRC emacs-lisp
   (defun oak/setup-fonts () "Setup basic font configuration."
-         (let ((monospace-font "Cascadia Mono-8"))
+         (let ((monospace-font "Cascadia Mono-10"))
            (set-face-attribute 'default nil :font monospace-font)
            (set-face-attribute 'fixed-pitch nil :font monospace-font))
          (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
@@ -575,7 +575,10 @@ Org capture is used here to quickly create tasks, and refile them.
 ** Refiling
 #+BEGIN_SRC emacs-lisp
   (setq org-refile-use-outline-path t)
-  (setq org-refile-targets '((nil . (:level . 1))))
+
+  (setq org-refile-targets '((oak-org-journal-file :maxlevel . 3)
+                             (oak-org-maybe-file :level . 1)
+                             (oak-org-tickler-file :maxlevel . 2)))
 #+END_SRC
 ** Eisenhower
 #+BEGIN_SRC emacs-lisp
