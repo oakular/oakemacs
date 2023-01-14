@@ -290,11 +290,6 @@ Use the elisp =ls= implementation.
 * Software Development
 ** Database
 #+BEGIN_SRC emacs-lisp
-    (setq sql-postgres-login-params
-          '((user :default "quetzalcoatl")
-            (server :default "nsbstagedb.postgres.database.azure.com")
-            (database :default "")))
-
   (use-package sqlup-mode
     :defer)
 
@@ -382,9 +377,9 @@ The backbone of support for software development
       (oak/define-mode-keymap csharp-mode-map '("C-. gd" . xref-find-definitions))
       (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references)))
   #+END_SRC
-** Csv
+** CSV
 #+begin_src emacs-lisp
-  (oak-package/require-local 'csv-mode
+  (oak-package/require 'csv-mode
     (add-to-list 'auto-mode-alist '("\\.csv\\'" . csv-mode)))
 #+end_src
 ** Javascript
@@ -429,13 +424,6 @@ The backbone of support for software development
   (add-hook 'emacs-lisp-mode-hook #'electric-layout-local-mode)
   (add-hook 'emacs-lisp-mode-hook #'flymake-mode)
 #+END_SRC
-** Nix
-Nix provides use with the ability to create replicable development environments on a per project basis.
-#+begin_src emacs-lisp
-  (use-package nix-mode
-    :mode "\\.nix\\'")
-  ;; (oak/add-auto-mode ".nix" nix-mode)
-#+end_src
 * Ebooks
 #+begin_src emacs-lisp
   (use-package nov
@@ -559,7 +547,7 @@ Org capture is used here to quickly create tasks, and refile them.
   (defun oak/org-sync ()
     "Sync org directory with cloud storage."
     (interactive)
-    (shell-command (if (not WINDOWS) "orgsync" "rclone sync C:\\Users\\VNA2\\org oakularorg:org")))
+    (eshell-command "rclone sync $HOME/org oakorg:org -v"))
 
   (defun oak-org/preview-as-html ()
     "Preview org file as HTML in the default browser."
