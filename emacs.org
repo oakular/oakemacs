@@ -506,13 +506,10 @@ Org capture is used here to quickly create tasks, and refile them.
   (setq org-capture-templates
         `(("t" "Todo" entry
            (file+headline oak-org-inbox-file "Captures")
-           "* TODO %?\n %a")
+           "* TODO %?\n %a %U")
           ("T" "Tickler" entry
            (file+headline oak-org-tickler-file "Tickler")
-           "* %i%? \n %U")
-          ("p" "Project" entry
-           (file+headline oak-org-journal-file "Projects")
-           "* %?\n %a %u")
+           "* %i%? \n %^T %U")
           ("r" "Reminder" entry
            (file+headline oak-org-journal-file "Reminders")
            "* %?\n %^T\n %a")))
