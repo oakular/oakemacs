@@ -541,6 +541,17 @@ Org capture is used here to quickly create tasks, and refile them.
   (defun oak/org-sync ()
     "Sync org directory with cloud storage."
     (interactive)
+    (if current-prefix-arg
+        (oak/do-org-pull)
+      (oak/do-org-push))
+    (org-revert-all-org-buffers))
+
+  (defun oak/do-org-pull ()
+    (setq current-prefix-arg nil)
+    (eshell-command "rclone sync oakorg:org $HOME/org -v"))
+
+  (defun oak/do-org-push ()
+    (setq current-prefix-arg nil)
     (eshell-command "rclone sync $HOME/org oakorg:org -v"))
 
   (defun oak-org/preview-as-html ()
