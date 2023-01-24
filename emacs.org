@@ -509,10 +509,7 @@ Org capture is used here to quickly create tasks, and refile them.
            "* TODO %^{Action}%? %^G\n:PROPERTIES:\n:CREATED: %U\n:CREATED_AT: %a\n:END:")
           ("T" "Tickler" entry
            (file+headline oak-org-tickler-file "Tickler")
-           "* %i%^{What?}%?  %^G\n%^T\nOrigin: %a %U")
-          ("r" "Reminder" entry
-           (file+headline oak-org-journal-file "Reminders")
-           "* %?\n %^T\n %a")))
+           "* %i%^{What?}%?  %^G\n%^t\n:PROPERTIES:\n:CREATED: %U\n:CREATED_AT: %a\n:END:")))
 #+END_SRC
 ** Custom org functions
 #+begin_src emacs-lisp
