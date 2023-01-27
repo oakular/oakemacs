@@ -602,6 +602,10 @@ Org capture is used here to quickly create tasks, and refile them.
                                          :recursive t)
                                    (list "site" :components '("site-org" "site-static"))))
 #+end_src
+** Babel
+#+begin_src emacs-lisp
+  (setq org-babel-load-languages '((emacs-lisp . t) (R . t)))
+#+end_src
 * Accounting
 ** Ledger
 Ledger provides a plain text format for double entry bookkeeping. This
@@ -620,6 +624,12 @@ ensures portability and longevity of data stored through ledger.
 #+begin_src emacs-lisp
 (oak-package/require 'gnuplot-mode)
 (oak/add-auto-mode ".gnuplot" 'gnuplot-mode)
+#+end_src
+* Finance
+** ESS
+#+begin_src emacs-lisp
+  (use-package ess)
+  
 #+end_src
 * Encryption
 Asymmetric encryption of personal files is a valid goal. One cannot
