@@ -604,7 +604,7 @@ Org capture is used here to quickly create tasks, and refile them.
 #+end_src
 ** Babel
 #+begin_src emacs-lisp
-  (setq org-babel-load-languages '((emacs-lisp . t) (R . t)))
+  (setq org-babel-load-languages '((emacs-lisp . t) (R . t) (python . t)))
 #+end_src
 * Accounting
 ** Ledger
