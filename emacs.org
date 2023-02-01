@@ -508,7 +508,7 @@ Org capture is used here to quickly create tasks, and refile them.
 
   (setq org-capture-templates
         `(("t" "Todo" entry
-           (file+headline oak-org-inbox-file "Captures")
+           (file+headline oak-org-journal-file "Next Actions")
            "* TODO %^{Action}%? %^G\n:PROPERTIES:\n:CREATED: %U\n:CREATED_AT: %a\n:END:")
           ("w" "Wait" entry
            (file+headline oak-org-journal-file "Waiting")
