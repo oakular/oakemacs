@@ -321,6 +321,9 @@ The backbone of support for software development
                               "~/bin/omnisharp/OmniSharp.exe"
                             "~/bin/omnisharp/run")))
       (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp"))))
+
+    (add-to-list 'eglot-server-programs (list 'python-mode . ("pylsp")))
+
     (oak/define-mode-keymap eglot-mode-map '("C-. r" . eglot-rename))
     (oak/define-mode-keymap eglot-mode-map '("C-. a" . eglot-code-actions)))
 #+end_src
@@ -507,6 +510,9 @@ Org capture is used here to quickly create tasks, and refile them.
         `(("t" "Todo" entry
            (file+headline oak-org-inbox-file "Captures")
            "* TODO %^{Action}%? %^G\n:PROPERTIES:\n:CREATED: %U\n:CREATED_AT: %a\n:END:")
+          ("w" "Wait" entry
+           (file+headline oak-org-journal-file "Waiting")
+           "* HOLD %^{Action}%? %^G\n:PROPERTIES:\n:CREATED: %U\n:CREATED_AT: %a\n:END:")
           ("T" "Tickler" entry
            (file+headline oak-org-tickler-file "Tickler")
            "* %i%^{What?}%?  %^G\n%^t\n:PROPERTIES:\n:CREATED: %U\n:CREATED_AT: %a\n:END:")))
