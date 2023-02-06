@@ -218,6 +218,11 @@ screen real estate.
            (window-height . 0.33)
            (side . bottom)
            (slot . 1))
+          ("\\*Eshell Command Output\\*"
+           (display-buffer-in-side-window)
+           (window-height . 0.15)
+           (side . bottom)
+           (slot . 1))
           ("\\*eww buffers\\*"
            (display-buffer-in-side-window)
            (window-height . 0.33)
