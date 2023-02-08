@@ -8,7 +8,7 @@
       '(("d" "Default"
          ((agenda #1="")
           (tags-todo "TODO=\"TODO\"-work")
-          (tags-todo "CATEGORY=\"Waiting\"")))
+          (tags-todo "CATEGORY=\"Waiting\"-work")))
         ("w" "Work"
          ((tags-todo "+work&TODO=\"TODO\"")
           (tags-todo "CATEGORY=\"Waiting\"")))
