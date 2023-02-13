@@ -25,7 +25,6 @@
                   ((org-agenda-span 1)
                    (org-agenda-overriding-header "Today\n")
                    (org-agenda-filter-apply "+work" 'tag 'expand)))))
-
         ("e" "Errands"
          ((tags-todo "+@bike|+@car")))))
 
