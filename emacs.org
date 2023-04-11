@@ -218,6 +218,11 @@ screen real estate.
            (window-height . 0.33)
            (side . bottom)
            (slot . 1))
+          ("\\*Eshell Command Output\\*"
+           (display-buffer-in-side-window)
+           (window-height . 0.15)
+           (side . bottom)
+           (slot . 1))
           ("\\*eww buffers\\*"
            (display-buffer-in-side-window)
            (window-height . 0.33)
@@ -327,6 +332,7 @@ The backbone of support for software development
       (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp"))))
 
     (add-to-list 'eglot-server-programs (list 'python-mode . ("pylsp")))
+    (add-to-list 'eglot-server-programs (list 'bicep-mode . ("~/bin/bicep-langserver/Bicep.LangServer.exe")))
 
     (oak/define-mode-keymap eglot-mode-map '("C-. r" . eglot-rename))
     (oak/define-mode-keymap eglot-mode-map '("C-. a" . eglot-code-actions)))
