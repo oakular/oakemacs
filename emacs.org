@@ -457,7 +457,6 @@ Sane org defaults
 
     (setq org-directory "~/org/org/")
     (setq oak-org-journal-file (concat org-directory "journal.org"))
-    (setq oak-org-inbox-file (concat org-directory "inbox.org"))
     (setq oak-org-maybe-file (concat org-directory "maybe.org"))
     (setq oak-org-tickler-file (concat org-directory "tickler.org"))
     (setq org-archive-location (concat org-directory "archive/archive_%s::"))
@@ -484,27 +483,26 @@ Sane org defaults
 ** Org agenda configuration.
   #+BEGIN_SRC emacs-lisp
     (setq org-agenda-files (list
-                             oak-org-inbox-file
                              oak-org-journal-file
                              oak-org-tickler-file
                              oak-org-maybe-file))
 
-     (setq org-agenda-span 3)
-     (setq org-agenda-window-setup 'other-window)
-     (setq org-agenda-show-all-dates t)
+    (setq org-agenda-span 3)
+    (setq org-agenda-window-setup 'other-window)
+    (setq org-agenda-show-all-dates t)
     (setq org-agenda-skip-scheduled-if-done t)
-     (setq org-deadline-warning-days 3)
-     (setq org-reverse-note-order t)
-     (setq org-enforce-todo-dependencies t)
-     (setq org-agenda-show-future-repeats "next")
-     (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 4))
-     (setq org-agenda-follow-indirect t)
-     (setq org-agenda-use-time-grid t)
+    (setq org-deadline-warning-days 3)
+    (setq org-reverse-note-order t)
+    (setq org-enforce-todo-dependencies t)
+    (setq org-agenda-show-future-repeats "next")
+    (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 4))
+    (setq org-agenda-follow-indirect t)
+    (setq org-agenda-use-time-grid t)
 
-     (oak/define-global-keymap '("C-c oa" . org-agenda))
-     (oak/define-global-keymap '("C-c c" . org-capture))
+    (oak/define-global-keymap '("C-c oa" . org-agenda))
+    (oak/define-global-keymap '("C-c c" . org-capture))
 
-     (oak-package/require-local 'oak-agenda)
+    (oak-package/require-local 'oak-agenda)
   #+END_SRC
 ** Org Capture
 Org capture is used here to quickly create tasks, and refile them.
