@@ -10,21 +10,17 @@
 
 (setq org-agenda-custom-commands
       '(("d" "Default"
-         ((agenda ""
-                  ((org-agenda-overridng-header oak-agenda-default-header)))
-          (tags-todo "TODO=\"TODO\"-work"
+         ((tags-todo "TODO=\"TODO\"-work"
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
           (tags-todo "CATEGORY=\"Waiting\"-work"
-                     ((org-agenda-overriding-header oak-agenda-waiting-header)))))
+                     ((org-agenda-overriding-header oak-agenda-waiting-header)))
+          (agenda ""
+                  ((org-agenda-overridng-header oak-agenda-default-header)))))
         ("w" nil
          ((tags-todo "+work&TODO=\"TODO\""
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
           (tags-todo "+work+CATEGORY=\"Waiting\""
-                     ((org-agenda-overriding-header oak-agenda-waiting-header)))
-          (agenda ""
-                  ((org-agenda-span 1)
-                   (org-agenda-overriding-header "Today\n")
-                   (org-agenda-filter-apply "+work" 'tag 'expand)))))
+                     ((org-agenda-overriding-header oak-agenda-waiting-header)))))
         ("e" "Errands"
          ((tags-todo "+@bike|+@car")))))
 
