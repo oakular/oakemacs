@@ -16,7 +16,7 @@
                      ((org-agenda-overriding-header oak-agenda-waiting-header)))
           (agenda ""
                   ((org-agenda-overridng-header oak-agenda-default-header)))))
-        ("w" nil
+        ("w" "Work"
          ((tags-todo "+work&TODO=\"TODO\""
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
           (tags-todo "+work+CATEGORY=\"Waiting\""
