@@ -12,14 +12,14 @@
       '(("d" "Default"
          ((tags-todo "TODO=\"TODO\"-work"
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
-          (tags-todo "CATEGORY=\"Waiting\"-work"
+          (tags "CATEGORY=\"Waiting\"-work"
                      ((org-agenda-overriding-header oak-agenda-waiting-header)))
           (agenda ""
                   ((org-agenda-overridng-header oak-agenda-default-header)))))
         ("w" "Work"
          ((tags-todo "+work&TODO=\"TODO\""
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
-          (tags-todo "+work+CATEGORY=\"Waiting\""
+          (tags "+work+CATEGORY=\"Waiting\""
                      ((org-agenda-overriding-header oak-agenda-waiting-header)))))
         ("e" "Errands"
          ((tags-todo "+@bike|+@car")))))
