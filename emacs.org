@@ -105,8 +105,8 @@
                                                        (habit . simplified))))
 
   (defvar oak-theme-current nil)
-  (defvar oak-theme-dark 'modus-vivendi-tinted)
-  (defvar oak-theme-light 'modus-operandi-tinted)
+  (defvar oak-theme-dark 'modus-vivendi)
+  (defvar oak-theme-light 'modus-operandi)
 
   (defun oak-theme/load-dark ()
     (setq modus-themes-syntax 'faint)
