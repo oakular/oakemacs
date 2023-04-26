@@ -734,6 +734,10 @@ box, and no one outside its maintainers know what is really going on.
   (setq eww-history-limit 300)
   (setq eww-browse-url-new-window-is-tab nil)
 #+END_SRCsudo apt-get clean
+** Gemini
+#+begin_src emacs-lisp
+  (oak-package/require 'elpher)
+#+end_src
 * Media
 ** Podcast/Video Downloads
 #+BEGIN_SRC emacs-lisp
