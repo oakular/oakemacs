@@ -627,6 +627,11 @@ Org capture is used here to quickly create tasks, and refile them.
 #+begin_src emacs-lisp
   (setq org-babel-load-languages '((emacs-lisp . t) (R . t) (python . t)))
 #+end_src
+** Exporting
+*** Gemtext
+#+begin_src emacs-lisp
+  (oak-package/require 'ox-gemini)
+#+end_src
 * Accounting
 ** Ledger
 Ledger provides a plain text format for double entry bookkeeping. This
