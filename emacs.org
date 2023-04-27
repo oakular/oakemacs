@@ -629,6 +629,9 @@ Org capture is used here to quickly create tasks, and refile them.
 #+end_src
 ** Exporting
 *** Gemtext
+The gemini protocol is an alternative to HTTPS. It helps to be able to
+export Org files to this format, so that blog posts can be published
+as gemtext /and/ HTML.
 #+begin_src emacs-lisp
   (oak-package/require 'ox-gemini)
 #+end_src
