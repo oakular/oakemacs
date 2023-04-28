@@ -16,6 +16,11 @@
                      ((org-agenda-overriding-header oak-agenda-waiting-header)))
           (agenda ""
                   ((org-agenda-overridng-header oak-agenda-default-header)))))
+        ("h" "Home"
+         ((tags-todo "TODO=\"TODO\"+@home"
+                     ((org-agenda-overriding-header oak-agenda-next-actions-header)))
+          (tags "CATEGORY=\"Waiting\"+@home"
+                ((org-agenda-overriding-header oak-agenda-waiting-header)))))
         ("w" "Work"
          ((tags-todo "+work&TODO=\"TODO\""
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
