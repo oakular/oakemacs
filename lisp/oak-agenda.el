@@ -21,6 +21,11 @@
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
           (tags "CATEGORY=\"Waiting\"+@home"
                 ((org-agenda-overriding-header oak-agenda-waiting-header)))))
+        ("c" "@Computer"
+         ((tags-todo "TODO=\"TODO\"+@computer"
+                     ((org-agenda-overriding-header oak-agenda-next-actions-header)))
+          (tags "CATEGORY=\"Waiting\"+@computer"
+                ((org-agenda-overriding-header oak-agenda-waiting-header)))))
         ("w" "Work"
          ((tags-todo "+work&TODO=\"TODO\""
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
