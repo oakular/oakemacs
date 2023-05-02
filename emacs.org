@@ -238,7 +238,12 @@ screen real estate.
           ("\\*Org Select\\*"
            (display-buffer-in-side-window)
            (side . right)
-           (window-width . 0.30))))
+           (window-width . 0.30))
+          ("\\*Org Babel Results\\*"
+           (display-buffer-in-side-window)
+           (window-height . 0.15)
+           (side . bottom)
+           (slot . -1))))
 
 
   (add-hook 'help-mode-hook #'visual-line-mode)
