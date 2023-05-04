@@ -100,6 +100,7 @@
   (oak-package/require 'modus-themes
                        (setq modus-themes-paren-match 'subtle-bold)
                        (setq modus-themes-mode-line '3d)
+                       (setq modus-themes-org-blocks 'tinted-background)
                        (setq modus-themes-org-agenda '((header-block . (variable-pitch scale-title))
                                                        (header-date . (workaholic bold-today))
                                                        (habit . simplified))))
