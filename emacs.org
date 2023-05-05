@@ -91,11 +91,11 @@
 * Theme
 #+BEGIN_SRC emacs-lisp
   (defun oak/setup-fonts () "Setup basic font configuration."
-         (let ((monospace-font "Cascadia Mono-10"))
+         (let ((monospace-font "Cascadia Mono-8"))
            (set-face-attribute 'default nil :font monospace-font)
            (set-face-attribute 'fixed-pitch nil :font monospace-font))
-         (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-10")
-           (set-face-attribute 'variable-pitch nil :font "Liberation Sans-10")))
+         (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-8")
+           (set-face-attribute 'variable-pitch nil :font "Liberation Sans-8")))
 
   (oak-package/require 'modus-themes
                        (setq modus-themes-paren-match 'subtle-bold)
