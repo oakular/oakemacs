@@ -270,6 +270,8 @@ screen real estate.
   (display-time-mode)
 #+end_src
 
+Display battery status in the modeline, as we don't have it visible
+from any desktop environment.
 #+begin_src emacs-lisp
 (display-battery-mode)
 #+end_src
