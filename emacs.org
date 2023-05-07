@@ -55,6 +55,7 @@ prompted each time for what to do with the existing buffer(s). Just
 rename extant buffers and move on.
 #+begin_src emacs-lisp
   (setq async-shell-command-buffer 'rename-buffer)
+  (setq async-shell-command-display-buffer nil)
 #+end_src
 * Package Management Setup
   We set the load path ourselves, and disable ~package.el~ from
@@ -267,6 +268,10 @@ screen real estate.
   (setq display-time-format "%a %b %e %k:%M")
   (setq display-time-24hr-format t)
   (display-time-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+(display-battery-mode)
 #+end_src
 * Dired
 #+begin_src emacs-lisp
