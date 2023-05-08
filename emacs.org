@@ -317,6 +317,12 @@ Use the elisp =ls= implementation.
 #+begin_src emacs-lisp
 (require 'bicep-mode)
 #+end_src
+** Docker
+Install the major mode for editing dockerfiles
+#+begin_src emacs-lisp
+(oak-package/require 'dockerfile-mode)
+#+end_src
+
 ** Database
 #+BEGIN_SRC emacs-lisp
   (use-package sqlup-mode
@@ -501,6 +507,7 @@ Sane org defaults
 #+BEGIN_SRC emacs-lisp
   (setq org-src-block-faces '(("emacs-lisp" (:family (when WINDOWS "Cascadia Mono" "Hack")))))
   (setq org-src-fontify-natively t)
+  (setq org-src-window-setup 'current-window)
 
   (add-hook 'org-src-mode-hook 'electric-pair-local-mode)
   (add-hook 'org-src-mode-hook 'hl-line-mode)
