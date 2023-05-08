@@ -340,7 +340,7 @@ is installed on your machine.
 The backbone of support for software development
 #+begin_src emacs-lisp
   (use-package eglot
-    :pin melpa
+    :pin gnu
     :ensure t
     :config
     (setq eglot-confirm-server-initiated-edits nil)
@@ -579,22 +579,6 @@ Org capture is used here to quickly create tasks, and refile them.
       (oak/org-find-agenda-file (nth 1 (read-multiple-choice "Agenda file:"
                                                            (oak/org-get-agenda-file-choice))))))
 
-  (defun oak/org-sync ()
-    "Sync org directory with cloud storage."
-    (interactive)
-    (if current-prefix-arg
-        (oak/do-org-pull)
-      (oak/do-org-push))
-    (org-revert-all-org-buffers))
-
-  (defun oak/do-org-pull ()
-    (setq current-prefix-arg nil)
-    (call-process "rclone" nil nil nil "sync" "oakorg:org" "$HOME/org" "-v"))
-
-  (defun oak/do-org-push ()
-    (setq current-prefix-arg nil)
-    (call-process "rclone" nil "*Org Sync*" nil "sync" "$HOME/org" "oakorg:org" "-v"))
-
   (defun oak-org/preview-as-html ()
     "Preview org file as HTML in the default browser."
     (interactive)
@@ -605,9 +589,17 @@ Org capture is used here to quickly create tasks, and refile them.
 
   (oak/define-global-keymap '("C-c of" . oak/org-find-file))
   (oak/define-global-keymap '("C-c oF" . oak/org-choose-agenda-file))
-  (oak/define-global-keymap '("C-c os" . oak/org-sync))
   (oak/define-mode-keymap org-mode-map '("C-c p". oak-org/preview-as-html))
   #+end_src
+
+  #+RESULTS:
+  : oak-org/preview-as-html
+** COMMENT Synchronization
+rclone is used to sync org files across devices, backed by blob storage. The following package binds sync commands
+#+begin_src emacs-lisp
+  (oak-package/require-local 'oak-org-sync
+    (oak/define-global-keymap '("C-c os" . oak-org/sync)))
+#+end_src
 ** Refiling
 #+BEGIN_SRC emacs-lisp
   (setq org-refile-targets '((oak-org-journal-file :maxlevel . 2)
