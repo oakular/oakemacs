@@ -259,10 +259,6 @@ screen real estate.
            (display-buffer-in-side-window)
            (side . right)
            (window-width . 0.40))
-          ("*.*Agenda*.*"
-           (display-buffer-in-side-window)
-           (side . right)
-           (window-width . 0.40))
           ("\\*Org Select\\*"
            (display-buffer-in-side-window)
            (side . right)
