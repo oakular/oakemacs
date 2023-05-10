@@ -222,6 +222,21 @@ screen real estate.
            (side . bottom)
            (slot . -1)
            (window-parameters . ((no-other-window . t))))
+          ("\\*vc-\\(diff\\|log\\)\\*"
+           (display-buffer-in-side-window)
+           (side . left)
+           (slot . 0)
+           (window-width . 0.30))
+          ("\\*log-edit-files\\*"
+           (display-buffer-in-side-window)
+           (side . left)
+           (slot . 1)
+           (window-width . 0.30))
+          ("^CAPTURE-.*"
+           (display-buffer-in-side-window)
+           (side . bottom)
+           (slot . -1)
+           (window-height . 0.20));
           ("\\*xref.*"
            (display-buffer-in-side-window)
            (window-height . 0.33)
@@ -247,7 +262,7 @@ screen real estate.
           ("\\*Org Select\\*"
            (display-buffer-in-side-window)
            (side . right)
-           (window-width . 0.30))
+           (window-width . 0.20))
           ("\\*Org Babel Results\\*"
            (display-buffer-in-side-window)
            (window-height . 0.15)
