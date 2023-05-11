@@ -35,6 +35,8 @@
                 oak-org/buffer
                 nil
                 "sync"
+                "--filter-from"
+                "filter"
                 "."
                 oak-org/remote
                 "-v"))
