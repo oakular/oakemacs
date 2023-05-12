@@ -659,7 +659,7 @@ rclone is used to sync org files across devices, backed by blob storage. The fol
 #+end_src
 ** Babel
 #+begin_src emacs-lisp
-  (setq org-babel-load-languages '((emacs-lisp . t) (R . t) (python . t)))
+  (org-babel-do-load-languages 'org-babel-load-languages '((emacs-lisp . t) (R . t) (python . t) (shell . t)))
 #+end_src
 ** Tables
 When copying down values, we do not want to increment.
