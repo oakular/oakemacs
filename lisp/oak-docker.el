@@ -14,13 +14,13 @@
            (read-string "Container: " (car containers) 'containers)))
       (start-process (concat "docker " cmd) "*docker*" "docker" "container" cmd oak-docker-focused-container))))
 
-(defun oak-docker/container/stop ()
+(defun oak-docker/container-stop ()
   (interactive)
   (set-process-sentinel
    (oak-docker/--container-cmd "stop")
    (lambda (x y) (message (concat "Stopping container " y)))))
 
-(defun oak-docker/container/start ()
+(defun oak-docker/container-start ()
   (interactive)
   (set-process-sentinel
    (oak-docker/--container-cmd "start")
