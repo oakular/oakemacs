@@ -16,12 +16,15 @@
 
 (defun oak-docker/container/stop ()
   (interactive)
-  (oak-docker/--container-cmd "stop")
-  (message "Container stopped successfully"))
+  (set-process-sentinel
+   (oak-docker/--container-cmd "stop")
+   (lambda (x y) (message (concat "Stopping container " y)))))
 
 (defun oak-docker/container/start ()
   (interactive)
-  (oak-docker/--container-cmd "start"))
+  (set-process-sentinel
+   (oak-docker/--container-cmd "start")
+   (lambda (x y) (message (concat "Starting container " y)))))
 
 (provide 'oak-docker)
 ;;; oak-docker.el ends here.
