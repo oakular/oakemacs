@@ -275,7 +275,7 @@ screen real estate.
 #+end_src
 * Modeline
 #+begin_src emacs-lisp
-  (setq which-func-modes '(csharp-mode org-mode web-mode vue-web-mode js2-mode emacs-lisp-mode))
+  (setq which-func-modes '(csharp-mode org-mode web-mode vue-web-mode js2-mode emacs-lisp-mode, ess-R-mode))
   (setq which-func-unknown "Outside function")
   (which-function-mode)
 
@@ -781,7 +781,7 @@ box, and no one outside its maintainers know what is really going on.
   (setq eww-header-line-format "%u - %t")
 
   (setq url-cookie-untrusted-urls '(".*"))
-  (setq eww-search-prefix "https://safe.duckduckgo.com/html/?q=")
+  (setq eww-search-prefix "http://localhost:80/?q=")
   (setq eww-bookmarks-directory (expand-file-name (concat user-emacs-directory "eww/")))
   (setq eww-history-limit 300)
   (setq eww-browse-url-new-window-is-tab nil)
@@ -790,6 +790,7 @@ box, and no one outside its maintainers know what is really going on.
 #+begin_src emacs-lisp
   (oak-package/require 'elpher)
   (setq elpher-use-emacs-bookmark-menu t)
+  (setq elpher-use-tls t)
 #+end_src
 * Media
 ** Podcast/Video Downloads
