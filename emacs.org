@@ -355,7 +355,7 @@ code was retrieved from [[https://raw.githubusercontent.com/ptrv/emacs.d/master/
 is installed on your machine.
 
 #+BEGIN_SRC emacs-lisp
-(oak-package/require-local 'gud-lldb)
+;;(oak-package/require-local 'gud-lldb)
 #+END_SRC
 ** Eglot
 The backbone of support for software development
@@ -468,8 +468,10 @@ The backbone of support for software development
  #+end_src
 ** YAML
 #+BEGIN_SRC emacs-lisp
-  (use-package yaml-mode
-    :mode "\\.yml\\'")
+  (oak-package/require 'yaml-mode
+                       (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+                       (add-hook 'yaml-mode-hook 'whitespace-mode))
+
 #+END_SRC
 ** Elisp
 #+BEGIN_SRC emacs-lisp
