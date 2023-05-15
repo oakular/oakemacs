@@ -12,34 +12,37 @@
   "Sync org directory with cloud storage."
   (interactive)
   (let ((default-directory oak-org/directory))
-    (if current-prefix-arg
-        (oak-org/do-pull)
-      (oak-org/do-push))
-    (org-revert-all-org-buffers)))
+    (set-process-sentinel
+     (if current-prefix-arg
+         (oak-org-sync/--pull)
+       (oak-org-sync/--push))
+     (lambda (_ y)
+       (when (equal y "finished\n")
+         (org-revert-all-org-buffers))))))
 
-(defun oak-org/do-pull ()
+(defun oak-org-sync/--pull ()
   "Pull files from the remote to the org sync directory."
-  (call-process "rclone"
-                nil
-                oak-org/buffer
-                nil
-                "sync"
-                oak-org/remote
-                "."
-                "-v"))
+  (start-process oak-org/buffer
+                 oak-org/buffer
+                 "rclone"
+                 "sync"
+                 "--filter-from"
+                 "filter"
+                 oak-org/remote
+                 "."
+                 "-v"))
 
-(defun oak-org/do-push ()
+(defun oak-org-sync/--push ()
   "Push files from the org sync directory to the remote."
-  (call-process "rclone"
-                nil
-                oak-org/buffer
-                nil
-                "sync"
-                "--filter-from"
-                "filter"
-                "."
-                oak-org/remote
-                "-v"))
+  (start-process oak-org/buffer
+                 oak-org/buffer
+                 "rclone"
+                 "sync"
+                 "--filter-from"
+                 "filter"
+                 "."
+                 oak-org/remote
+                 "-v"))
 
 (provide 'oak-org-sync)
 ;;; oak-org-sync.el ends here
