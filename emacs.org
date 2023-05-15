@@ -217,14 +217,11 @@ screen real estate.
            (side . right)
            (slot . 0))
           ("\\*\\(compilation\\|vc-git :\\|dotnet-process\\).*"
+           (display-buffer-at-bottom)
+           (window-height . 0.20))
+          ("\\*vc-\\(diff\\|change-log\\)\\*"
            (display-buffer-in-side-window)
-           (window-height . 0.20)
-           (side . bottom)
-           (slot . -1)
-           (window-parameters . ((no-other-window . t))))
-          ("\\*vc-\\(diff\\|log\\)\\*"
-           (display-buffer-in-side-window)
-           (side . left)
+           (side . right)
            (slot . 0)
            (window-width . 0.30))
           ("\\*log-edit-files\\*"
