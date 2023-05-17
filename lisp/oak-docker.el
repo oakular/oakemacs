@@ -8,12 +8,16 @@
    (shell-command-to-string
     "docker container ls -a --format \"{{.Names}}\"")))
 
+(defun oak-docker/--cmd (cmd &rest args)
+  "Run docker CMD with ARGS."
+  (apply 'start-process (concat "docker" " " cmd) "*docker*" "docker" cmd args))
+
 (defun oak-docker/--container-cmd (cmd)
   "Run the docker container command, CMD, on a container read from the minibuffer."
   (let ((containers (oak-docker/--container-ls)))
     (let ((oak-docker-focused-container
            (read-string "Container: " (car containers) 'containers)))
-      (start-process (concat "docker " cmd) "*docker*" "docker" "container" cmd oak-docker-focused-container))))
+      (oak-docker/--cmd "container" cmd oak-docker-focused-container))))
 
 (defun oak-docker/container-stop ()
   "Stop the docker container read from the minibuffer."
