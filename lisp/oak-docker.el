@@ -2,6 +2,12 @@
 ;;; Commentary:
 
 ;;; Code:
+(require 'oak-project)
+
+(defconst oak-docker-build-cmd "build")
+(defconst oak-docker-container-cmd "container")
+
+
 (defun oak-docker/--container-ls ()
   "Return a list of containers."
   (split-string
@@ -17,7 +23,7 @@
   (let ((containers (oak-docker/--container-ls)))
     (let ((oak-docker-focused-container
            (read-string "Container: " (car containers) 'containers)))
-      (oak-docker/--cmd "container" cmd oak-docker-focused-container))))
+      (oak-docker/--cmd oak-docker-container-cmd cmd oak-docker-focused-container))))
 
 (defun oak-docker/container-stop ()
   "Stop the docker container read from the minibuffer."
@@ -32,6 +38,10 @@
   (set-process-sentinel
    (oak-docker/--container-cmd "start")
    (lambda (x y) (message (concat "Starting container " y)))))
+
+(defun oak-docker/build (dir)
+  "Build the docker image in the directory DIR."
+  (oak-docker/--cmd oak-docker-build-cmd dir))
 
 (provide 'oak-docker)
 ;;; oak-docker.el ends here.
