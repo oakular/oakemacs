@@ -678,30 +678,11 @@ as gemtext /and/ HTML.
 #+begin_src emacs-lisp
   (oak-package/require 'ox-gemini)
 #+end_src
-* Accounting
-** Ledger
-Ledger provides a plain text format for double entry bookkeeping. This
-ensures portability and longevity of data stored through ledger.
-
-#+BEGIN_SRC emacs-lisp
-  (oak-package/require 'ledger-mode)
-  (oak/add-auto-mode ".legder" 'ledger-mode)
-
-  (setq ledger-reports '(("monthly expenses" "ledger -b %(start-date) -e %(end-date) -S T bal ^Expenses or ^Liabilities")
-                         ("balance" "%(binary) -f %(ledger-file) bal")
-                         ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
-                         ("account" "%(binary) -f %(ledger-file) reg %(account)")))
-#+END_SRC
-** Gnuplot
-#+begin_src emacs-lisp
-(oak-package/require 'gnuplot-mode)
-(oak/add-auto-mode ".gnuplot" 'gnuplot-mode)
-#+end_src
 * Finance
 ** ESS
 #+begin_src emacs-lisp
-  (use-package ess)
-  
+  (oak-package/require 'ess
+                       (setq ess-use-ido nil))
 #+end_src
 * Encryption
 Asymmetric encryption of personal files is a valid goal. One cannot
@@ -802,3 +783,26 @@ box, and no one outside its maintainers know what is really going on.
                                 (setq calc-display-trail nil)))
 #+end_src
 
+* Archive                                                              :ARCHIVE:
+** Accounting
+:PROPERTIES:
+:ARCHIVE_TIME: 2023-05-17 Wed 07:38
+:END:
+*** Ledger
+Ledger provides a plain text format for double entry bookkeeping. This
+ensures portability and longevity of data stored through ledger.
+
+#+BEGIN_SRC emacs-lisp
+  (oak-package/require 'ledger-mode)
+  (oak/add-auto-mode ".legder" 'ledger-mode)
+
+  (setq ledger-reports '(("monthly expenses" "ledger -b %(start-date) -e %(end-date) -S T bal ^Expenses or ^Liabilities")
+                         ("balance" "%(binary) -f %(ledger-file) bal")
+                         ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
+                         ("account" "%(binary) -f %(ledger-file) reg %(account)")))
+#+END_SRC
+*** Gnuplot
+#+begin_src emacs-lisp
+(oak-package/require 'gnuplot-mode)
+(oak/add-auto-mode ".gnuplot" 'gnuplot-mode)
+#+end_src
