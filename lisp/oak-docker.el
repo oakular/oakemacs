@@ -2,8 +2,6 @@
 ;;; Commentary:
 
 ;;; Code:
-(require 'oak-project)
-
 (defconst oak-docker-build-cmd "build")
 (defconst oak-docker-container-cmd "container")
 
