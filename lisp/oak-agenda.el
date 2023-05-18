@@ -9,14 +9,7 @@
 (defvar oak-agenda-default-header "Agenda\n")
 
 (setq org-agenda-custom-commands
-      '(("d" "Default"
-         ((tags-todo "TODO=\"TODO\"-work"
-                     ((org-agenda-overriding-header oak-agenda-next-actions-header)))
-          (tags "CATEGORY=\"Waiting\"-work"
-                     ((org-agenda-overriding-header oak-agenda-waiting-header)))
-          (agenda ""
-                  ((org-agenda-overridng-header oak-agenda-default-header)))))
-        ("h" "Home"
+      '(("h" "Home"
          ((tags-todo "TODO=\"TODO\"+@home"
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
           (tags "CATEGORY=\"Waiting\"+@home"
@@ -30,13 +23,21 @@
          ((tags-todo "+work&TODO=\"TODO\""
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
           (tags "+work+CATEGORY=\"Waiting\""
-                     ((org-agenda-overriding-header oak-agenda-waiting-header)))))
+                ((org-agenda-overriding-header oak-agenda-waiting-header)))))
         ("e" "Errands"
-         ((tags-todo "+@bike|+@car")))))
+         ((tags-todo "+@bike|+@car")))
+        ("o" "Other"
+         ((tags-todo "TODO=\"TODO\"-work-@home-@computer"
+                     ((org-agenda-overriding-header oak-agenda-next-actions-header)))
+          (tags "CATEGORY=\"Waiting\"-work-@home-@computer"
+                ((org-agenda-overriding-header oak-agenda-waiting-header)))
+          (agenda ""
+                  ((org-agenda-overridng-header oak-agenda-default-header)))))))
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars)
 ;; End:
 
 (provide 'oak-agenda)
-;;; org-agenda.el ends here
+;;; oak-agenda.el ends here.
+
