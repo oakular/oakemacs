@@ -7,6 +7,7 @@
 (defvar oak-agenda-next-actions-header "Next Actions\n")
 (defvar oak-agenda-waiting-header "Waiting\n")
 (defvar oak-agenda-default-header "Agenda\n")
+(setq org-agenda-block-separator 45)
 
 (setq org-agenda-custom-commands
       '(("h" "Home"
