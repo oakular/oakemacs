@@ -618,8 +618,9 @@ Org capture is used here to quickly create tasks, and refile them.
 ** Synchronization
 rclone is used to sync org files across devices, backed by blob storage. The following package binds sync commands
 #+begin_src emacs-lisp
-  (oak-package/require-local 'oak-org-sync
-    (oak/define-global-keymap '("C-c os" . oak-org/sync)))
+    (oak-package/require-local 'oak-org-sync
+      (oak/define-global-keymap '("C-c os" . oak-org-sync/push))
+      (oak/define-global-keymap '("C-c oS" . oak-org-sync/pull)))
 #+end_src
 ** Refiling
 #+BEGIN_SRC emacs-lisp

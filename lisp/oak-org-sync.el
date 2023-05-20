@@ -8,7 +8,7 @@
 (defvar oak-org/remote "oakorg:org")
 (defvar oak-org/buffer "*Org Sync*")
 
-(defun oak-org/sync ()
+(defun oak-org/sync (push)
   "Sync org directory with cloud storage."
   (interactive)
   (let ((default-directory oak-org/directory))
@@ -19,6 +19,22 @@
      (lambda (_ y)
        (when (equal y "finished\n")
          (org-revert-all-org-buffers))))))
+
+(defun oak-org-sync/push ()
+  "Push files from the org sync directory to the remote."
+  (interactive)
+  (let ((default-directory oak-org/directory))
+    (set-process-sentinel (oak-org-sync/--push) nil)))
+
+(defun oak-org-sync/pull ()
+  "Pull files from the remote to the org sync directory."
+  (interactive)
+  (let ((default-directory oak-org/directory))
+    (set-process-sentinel
+     (oak-org-sync/--pull)
+     (lambda (_ y)
+       (when (equal y "finished\n")
+                    (org-revert-all-org-buffers))))))
 
 (defun oak-org-sync/--pull ()
   "Pull files from the remote to the org sync directory."
