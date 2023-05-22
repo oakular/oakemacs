@@ -477,6 +477,11 @@ The backbone of support for software development
   (add-hook 'emacs-lisp-mode-hook #'electric-layout-local-mode)
   (add-hook 'emacs-lisp-mode-hook #'flymake-mode)
 #+END_SRC
+** Powershell
+Install powershell mode
+#+begin_src emacs-lisp
+(oak-package/require 'powershell)
+#+end_src
 * Ebooks
 #+begin_src emacs-lisp
   (use-package nov
