@@ -26,7 +26,7 @@
           (tags "+work+CATEGORY=\"Waiting\""
                 ((org-agenda-overriding-header oak-agenda-waiting-header)))))
         ("e" "Errands"
-         ((tags-todo "+@bike|+@car")))
+         ((tags-todo "+@bike|+@car|+@walk")))
         ("o" "Other"
          ((tags-todo "TODO=\"TODO\"-work-@home-@computer"
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
