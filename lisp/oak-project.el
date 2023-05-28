@@ -1,5 +1,4 @@
 ;;; oak-project.el --- Functions providing extensions to the built-in project.el -*- lexical-binding: t -*-
-
 (require 'project)
 
 (defcustom oak-project-run-command nil
@@ -9,7 +8,7 @@
 (defun oak-project/configure ()
   "Setup project.el."
   (oak/define-global-keymap '("C-x p C" . oak-project/do-run-project))
-  (add-to-list 'project-switch-commands '(magit-status "Magit status"))
+
   (setq project-prefix-map '(keymap
                              (120 . project-execute-extended-command)
                              (114 . project-query-replace-regexp)
@@ -19,8 +18,8 @@
                              (107 . project-kill-buffers)
                              (101 . project-eshell)
                              (99 . project-compile)
-                             (118 . magit-status)
-                             (100 . project-dired)
+                             (118 . project-vc-dir)
+                             (68 . project-dired)
                              (115 . project-shell)
                              (98 . project-switch-to-buffer)
                              (70 . project-or-external-find-file)
@@ -30,11 +29,11 @@
     (setq project-vc-merge-submodules nil))
 
 (defun oak/shell-command-project-root (cmd)
-  "Run a shell command in the root of the current project."
+  "Run a shell command CMD in the root of the current project."
   (oak/exec-fun-project-root (shell-command cmd)))
 
 (defun oak/make-process-project-root (&rest args)
-  "Run a command as a new process in the project root."
+  "Run a command with ARGS as a new process in the project root."
   (let ((name (plist-get args :name))
         (buffer (plist-get args :buffer))
         (command (plist-get args :command)))
@@ -44,13 +43,14 @@
                                                :command command)))))
 
 (defun oak/exec-fun-project-root (fun)
-  "Execute a function in the context of the project root."
+  "Execute a function FUN in the context of the project root."
   (let ((default-directory (project-root (project-current t))))
     (funcall fun)))
 
 (defun oak-project/do-run-project ()
-  "Run the current project using the defined oak-project-run-command."
+  "Run the current project using the defined 'oak-project-run-command'."
   (interactive)
   (compile oak-project-run-command))
 
 (provide 'oak-project)
+;;; oak-project.el ends here.
