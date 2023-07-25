@@ -366,7 +366,7 @@ The backbone of support for software development
 
     (let ((omnisharp-path (if WINDOWS
                               "~/bin/omnisharp/OmniSharp.exe"
-                            "~/bin/omnisharp/run")))
+                            "~/bin/omnisharp/OmniSharp")))
       (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp"))))
 
     (add-to-list 'eglot-server-programs (list 'python-mode . ("pylsp")))
