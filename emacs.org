@@ -576,7 +576,10 @@ Org capture is used here to quickly create tasks, and refile them.
            "* %i%^{What?}%?\n:PROPERTIES:\n:CREATED: %U\n:CREATED_AT: %a\n:END:")
           ("r", "To Read" entry
            (file+headline oak-org-maybe-file "To Read")
-                 "* %i%^{What?}%?\n:PROPERTIES:\n:CREATED: %U\n:CREATED_AT: %a\n:END:")))
+           "* %i%^{What?}%?\n:PROPERTIES:\n:CREATED: %U\n:CREATED_AT: %a\n:END:")
+          ("i", "Inbox" entry
+           (file+headline oak-org-journal-file "Inbox")
+           "* %i%^{What?}%?\n:PROPERTIES:\n:CREATED: %U\n:CREATED_AT: %a\n:END:")))
 #+END_SRC
 ** Custom org functions
 #+begin_src emacs-lisp
