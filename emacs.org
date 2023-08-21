@@ -325,17 +325,21 @@ Use the elisp =ls= implementation.
     (oak-project/configure))
 #+end_src
 * Software Development
-** Bicep
+** Bicep                                                              :ARCHIVE:
 #+begin_src emacs-lisp
 (require 'bicep-mode)
 #+end_src
-** Docker
+** Docker                                                             :ARCHIVE:
 Install the major mode for editing dockerfiles
 #+begin_src emacs-lisp
-(oak-package/require 'dockerfile-mode)
+  (oak-package/require 'dockerfile-mode)
 #+end_src
 
-** Database
+Provide support for linking into containers via Tramp
+#+begin_src emacs-lisp
+  (oak-package/require 'docker-tramp)
+#+end_src
+** Database                                                           :ARCHIVE:
 #+BEGIN_SRC emacs-lisp
   (use-package sqlup-mode
     :defer)
@@ -344,7 +348,11 @@ Install the major mode for editing dockerfiles
     (add-hook 'sql-interative-mode-hook #'sqlup-mode)
     (add-hook 'sql-interactive-mode-hook #'toggle-truncate-lines)
 #+END_SRC
-** Debugging
+** Terraform                                                          :ARCHIVE:
+#+begin_src emacs-lisp
+  (oak-package/require 'terraform-mode)
+#+end_src
+** Debugging                                                          :ARCHIVE:
 By default Emacs has no support for LLDB, mainly due to perceived
 competition between GCC and LLVM. Here, we load an extension to Emacs'
 default debugger interface, GUD, which provides support for LLDB. The
@@ -385,7 +393,7 @@ The backbone of support for software development
     :mode "\\.md\\'"
     )
 #+end_src
-** Web Mode
+** Web Mode                                                           :ARCHIVE:
 #+begin_src emacs-lisp
   (oak-package/require 'web-mode)
 
@@ -702,7 +710,7 @@ box, and no one outside its maintainers know what is really going on.
 #+begin_src emacs-lisp
 (epa-file-enable)
 #+end_src
-* Email
+* Email                                                                :ARCHIVE:
 #+begin_src emacs-lisp
   (setq gnus-select-method
         '(nnimap "Email"
