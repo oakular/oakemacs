@@ -515,8 +515,8 @@ Sane org defaults
     (add-to-list 'org-modules 'org-tempo)
 
     (setq org-directory "~/org/org/")
-    (setq oak-org-journal-file (concat org-directory "journal.org"))
-    (setq oak-org-maybe-file (concat org-directory "maybe.org"))
+    (setq oak-org-journal-file (concat org-directory "journal.org.age"))
+    (setq oak-org-maybe-file (concat org-directory "maybe.org.age"))
     (setq oak-org-tickler-file (concat org-directory "tickler.org"))
     (setq org-archive-location (concat org-directory "archive/archive_%s::"))
     (setq org-startup-with-latex-preview nil)
@@ -707,8 +707,16 @@ trust the location they store their files to be secure, especially not
 when storage is delegated to the cloud; cloud services are a black
 box, and no one outside its maintainers know what is really going on.
 
+GPG has some usability issues so we use age to encrypt files now.
 #+begin_src emacs-lisp
-(epa-file-enable)
+  (use-package age
+    :ensure t
+    :demand t
+    :custom
+    (age-default-identity "~/.ssh/agekey")
+    (age-default-recipient "~/.ssh/agekey.pub")
+    :config
+    (age-file-enable))
 #+end_src
 * Email                                                                :ARCHIVE:
 #+begin_src emacs-lisp
