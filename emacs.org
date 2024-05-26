@@ -517,7 +517,7 @@ Sane org defaults
     (setq org-directory "~/org/org/")
     (setq oak-org-journal-file (concat org-directory "journal.org.age"))
     (setq oak-org-maybe-file (concat org-directory "maybe.org.age"))
-    (setq oak-org-tickler-file (concat org-directory "tickler.org"))
+    (setq oak-org-tickler-file (concat org-directory "tickler.org.age"))
     (setq org-archive-location (concat org-directory "archive/archive_%s::"))
     (setq org-startup-with-latex-preview nil)
     (setq org-startup-indented t)
