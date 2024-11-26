@@ -5,13 +5,19 @@
 (require 'org)
 
 (defvar oak-agenda-next-actions-header "Next Actions\n")
+(defvar oak-agenda-inbox-header "Inbox\n")
 (defvar oak-agenda-waiting-header "Waiting\n")
 (defvar oak-agenda-default-header "Agenda\n")
 (setq org-agenda-block-separator 45)
+(setq org-agenda-todo-ignore-scheduled 'future)
+(setq org-agenda-tags-todo-honor-ignore-options t)
 
 (setq org-agenda-custom-commands
-      '(("h" "Home"
-         ((tags-todo "TODO=\"TODO\"+@home"
+      '(("i" "Inbox"
+         ((tags "CATEGORY=\"Inbox\""
+                 ((org-agenda-overriding-header oak-agenda-inbox-header)))))
+        ("h" "Home"
+         ((tags-todo "+TODO=\"TODO\"&+@home&+CATEGORY=\"Next\"&(SCHEDULED=\"\"|SCHEDULED=\"<today>\")"
                      ((org-agenda-overriding-header oak-agenda-next-actions-header)))
           (tags "CATEGORY=\"Waiting\"+@home"
                 ((org-agenda-overriding-header oak-agenda-waiting-header)))))
