@@ -99,10 +99,10 @@ rename extant buffers and move on.
 * Theme
 #+BEGIN_SRC emacs-lisp
   (defun oak/setup-fonts () "Setup basic font configuration."
-         (let ((monospace-font (if WINDOWS "Cascadia Mono-8" "CascadiaMono-8")))
+         (let ((monospace-font (if (or WINDOWS MACOS) "Cascadia Mono-10" "CascadiaMono-9")))
            (set-face-attribute 'default nil :font monospace-font)
            (set-face-attribute 'fixed-pitch nil :font monospace-font))
-         (if WINDOWS (set-face-attribute 'variable-pitch nil :font "Arial-8")
+         (if (or WINDOWS MACOS) (set-face-attribute 'variable-pitch nil :font "Arial-8")
            (set-face-attribute 'variable-pitch nil :font "DejaVuSans-8")))
 
   (oak-package/require 'modus-themes
@@ -139,7 +139,7 @@ rename extant buffers and move on.
       (oak-theme/load-light)))
 
   (when (eq oak-theme-current nil)
-    (oak-theme/load-dark))
+    (oak-theme/load-light))
 
   (oak/setup-fonts)
 #+END_SRC
