@@ -14,6 +14,7 @@
       initial-scratch-message nil)
 
 (defconst WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+(defconst MACOS (eq system-type 'darwin))
 
 (when WINDOWS
   (setq w32-get-true-file-attributes nil
