@@ -183,6 +183,12 @@ we mainly try to impose *nix patterns on the Window environment.
   (setq w32-pass-lwindow-to-system nil)
   ;; (w32-register-hot-key [s-])
 #+END_SRC
+** macOS
+#+begin_src emacs-lisp
+  (when MACOS
+    (setq mac-option-modifier 'alt)
+    (setq mac-command-modifier 'meta))
+#+end_src
 * Completion
 #+begin_src emacs-lisp
   (oak-package/require 'icomplete-vertical
