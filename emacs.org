@@ -99,7 +99,7 @@ rename extant buffers and move on.
 * Theme
 #+BEGIN_SRC emacs-lisp
   (defun oak/setup-fonts () "Setup basic font configuration."
-         (let ((monospace-font (if (or WINDOWS MACOS) "Cascadia Mono-10" "CascadiaMono-9")))
+         (let ((monospace-font (if (or WINDOWS MACOS) "Cascadia Mono-12" "CascadiaMono-9")))
            (set-face-attribute 'default nil :font monospace-font)
            (set-face-attribute 'fixed-pitch nil :font monospace-font))
          (if (or WINDOWS MACOS) (set-face-attribute 'variable-pitch nil :font "Arial-8")
@@ -535,6 +535,7 @@ Sane org defaults
     (setq org-todo-keywords '((sequence "TODO(t)" "HOLD(h)" "|" "DONE(d)" "CANCELLED(c)")))
 
     (oak/define-global-keymap '("C-c ob" . org-switchb))
+    (add-hook 'org-mode-hook 'org-table-header-line-mode)
   #+END_SRC
 ** Source block configuration
 #+BEGIN_SRC emacs-lisp
