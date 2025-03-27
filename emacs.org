@@ -102,7 +102,7 @@ rename extant buffers and move on.
          (let ((monospace-font (if (or WINDOWS MACOS) "Cascadia Mono-12" "CascadiaMono-9")))
            (set-face-attribute 'default nil :font monospace-font)
            (set-face-attribute 'fixed-pitch nil :font monospace-font))
-         (if (or WINDOWS MACOS) (set-face-attribute 'variable-pitch nil :font "Arial-8")
+         (if (or WINDOWS MACOS) (set-face-attribute 'variable-pitch nil :font "Arial-12")
            (set-face-attribute 'variable-pitch nil :font "DejaVuSans-8")))
 
   (oak-package/require 'modus-themes
