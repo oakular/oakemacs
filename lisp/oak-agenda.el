@@ -39,7 +39,10 @@
           (tags "CATEGORY=\"Waiting\"-work-@home-@computer"
                 ((org-agenda-overriding-header oak-agenda-waiting-header)))
           (agenda ""
-                  ((org-agenda-overridng-header oak-agenda-default-header)))))))
+                  ((org-agenda-overridng-header oak-agenda-default-header)))))
+        ("l" "Locale Change"
+         ((tags-todo "+LocaleChange"
+                     ((org-agenda-overridng-header "Locale Change")))))))
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars)
