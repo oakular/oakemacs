@@ -57,6 +57,10 @@ rename extant buffers and move on.
   (setq async-shell-command-buffer 'rename-buffer)
   (setq async-shell-command-display-buffer nil)
 #+end_src
+** Files
+#+begin_src emacs-lisp
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+#+end_src
 * Package Management Setup
   We set the load path ourselves, and disable ~package.el~ from
   fetching and updating automatically.
