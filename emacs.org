@@ -15,7 +15,7 @@
 * Identity
   #+BEGIN_SRC emacs-lisp
     (setq user-full-name "Callum Warrilow"
-	  user-mail-address "callum_warrilow@outlook.com")
+          user-mail-address "callum_warrilow@outlook.com")
   #+END_SRC
 * Sane Defaults
   Customize settings will be stored in a separate file.
@@ -395,9 +395,7 @@ The backbone of support for software development
 #+end_src
 ** Markdown
 #+begin_src emacs-lisp
-  (use-package markdown-mode
-    :mode "\\.md\\'"
-    )
+  (use-package markdown-mode :mode "\\.md\\'")
 #+end_src
 ** Web Mode                                                           :ARCHIVE:
 #+begin_src emacs-lisp
@@ -798,12 +796,6 @@ GPG has some usability issues so we use age to encrypt files now.
   (setq eww-history-limit 300)
   (setq eww-browse-url-new-window-is-tab nil)
 #+END_SRC
-** Gemini
-#+begin_src emacs-lisp
-  (oak-package/require 'elpher)
-  (setq elpher-use-emacs-bookmark-menu t)
-  (setq elpher-use-tls t)
-#+end_src
 * Media
 ** Podcast/Video Downloads
 #+BEGIN_SRC emacs-lisp
