@@ -118,7 +118,7 @@ rename extant buffers and move on.
                                                        (habit . simplified))))
 
   (defvar oak-theme-current nil)
-  (defvar oak-theme-dark 'modus-vivendi)
+  (defvar oak-theme-dark 'modus-vivendi-tinted)
   (defvar oak-theme-light 'modus-operandi)
 
   (defun oak-theme/load-dark ()
