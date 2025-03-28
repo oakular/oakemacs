@@ -190,7 +190,8 @@ we mainly try to impose *nix patterns on the Window environment.
 ** macOS
 #+begin_src emacs-lisp
   (when MACOS
-    (setq mac-option-modifier 'alt)
+    (setq mac-option-modifier 'none)
+    (setq mac-right-option-modifier 'alt)
     (setq mac-command-modifier 'meta))
 #+end_src
 * Completion
@@ -497,6 +498,12 @@ The backbone of support for software development
 Install powershell mode
 #+begin_src emacs-lisp
 (oak-package/require 'powershell)
+#+end_src
+* Typesetting
+#+begin_src emacs-lisp
+  (oak-package/require 'auctex
+                       (setq TeX-auto-save t)
+                       (setq TeX-parse-self t))
 #+end_src
 * Ebooks
 #+begin_src emacs-lisp
