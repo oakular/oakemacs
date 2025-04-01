@@ -125,13 +125,13 @@ rename extant buffers and move on.
     (setq modus-themes-syntax 'faint)
     (setq modus-themes-region '(accented no-extend))
     (load-theme oak-theme-dark t)
-    (setq-local oak-theme-current oak-theme-dark))
+    (setq oak-theme-current oak-theme-dark))
 
   (defun oak-theme/load-light ()
     (setq modus-themes-syntax 'alt-syntax)
     (setq modus-themes-region '(bg-only accented no-extend))
     (load-theme oak-theme-light t)
-    (setq-local oak-theme-current oak-theme-light))
+    (setq oak-theme-current oak-theme-light))
 
   (defun oak-theme/toggle ()
     "Toggle the active theme between dark and light."
