@@ -8,8 +8,8 @@
 (defun sqm/calc
     (length width &optional padding-percentage)
   "Calculates the square area given by LENGTH and WIDTH.
-WASTAGE-PERCENTAGE may be provided to pad the area calculated."
-  (unless padding-percentage (setq padding-percentage 0))
+PADDING-PERCENTAGE may be provided to pad the area calculated."
+  (unless padding-percentage (setq padding-percentage PADDING-DEFAULT))
   (*(* length width) (+ 1 padding-percentage)))
 
 (defun sqm/calc-many
