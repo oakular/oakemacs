@@ -350,14 +350,13 @@ Provide support for linking into containers via Tramp
 #+begin_src emacs-lisp
   (oak-package/require 'docker-tramp)
 #+end_src
-** Database                                                           :ARCHIVE:
+** Database
 #+BEGIN_SRC emacs-lisp
-  (use-package sqlup-mode
-    :defer)
+  (use-package sqlup-mode :defer)
 
-    (add-hook 'sql-mode-hook #'sqlup-mode)
-    (add-hook 'sql-interative-mode-hook #'sqlup-mode)
-    (add-hook 'sql-interactive-mode-hook #'toggle-truncate-lines)
+  (add-hook 'sql-mode-hook #'sqlup-mode)
+  (add-hook 'sql-interative-mode-hook #'sqlup-mode)
+  (add-hook 'sql-interactive-mode-hook #'toggle-truncate-lines)
 #+END_SRC
 ** Terraform                                                          :ARCHIVE:
 #+begin_src emacs-lisp
@@ -376,10 +375,7 @@ is installed on your machine.
 ** Eglot
 The backbone of support for software development
 #+begin_src emacs-lisp
-  (use-package eglot
-    :pin gnu
-    :ensure t
-    :config
+  (oak-package/require-local 'eglot
     (setq eglot-confirm-server-initiated-edits nil)
     (setq eglot-connect-timeout 180)
 
@@ -493,6 +489,7 @@ The backbone of support for software development
   (add-hook 'emacs-lisp-mode-hook #'electric-pair-local-mode)
   (add-hook 'emacs-lisp-mode-hook #'electric-layout-local-mode)
   (add-hook 'emacs-lisp-mode-hook #'flymake-mode)
+  (add-hook 'emacs-lisp-mode-hook #'completion-preview-mode)
 #+END_SRC
 ** Powershell
 Install powershell mode
