@@ -19,7 +19,7 @@ PADDING-PERCENTAGE may be provided to pad the area calculated."
   (unless (plistp dimensions) (error "Dimensions provided was not a %s" 'plist))
   (seq-reduce
    (lambda (x y)
-     (+ (sqm/calc (alist-get 'length y) (alist-get 'width y) padding-percentage) x))
+     (+ (sqm/calc (plist-get y 'length) (plist-get y 'width) padding-percentage) x))
    dimensions 0))
 
 (provide 'sqm)
