@@ -42,7 +42,10 @@
                   ((org-agenda-overridng-header oak-agenda-default-header)))))
         ("l" "Locale Change"
          ((tags-todo "+LocaleChange"
-                     ((org-agenda-overridng-header "Locale Change")))))))
+                     ((org-agenda-overridng-header "Locale Change")))))
+        ("D" "Decluttering"
+         ((tags-todo "+Declutter"
+                     ((org-agenda-overridng-header "Decluttering")))))))
 
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars)
@@ -50,4 +53,3 @@
 
 (provide 'oak-agenda)
 ;;; oak-agenda.el ends here.
-
