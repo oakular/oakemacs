@@ -12,6 +12,12 @@
   #+BEGIN_SRC emacs-lisp
     (fset 'yes-or-no-p 'y-or-n-p)
   #+END_SRC
+
+  #+begin_src emacs-lisp
+    (when MACOS
+      (push '(width . 120) default-frame-alist)
+      (push '(height . 80) default-frame-alist))
+  #+end_src
 * Identity
   #+BEGIN_SRC emacs-lisp
     (setq user-full-name "Callum Warrilow"
