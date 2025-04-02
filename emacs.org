@@ -214,10 +214,8 @@ we mainly try to impose *nix patterns on the Window environment.
    (setq completion-ignore-case
          read-buffer-completion-ignore-case
          read-file-name-completion-ignore-case t)
-   (setq completion-styles '(substring
-                             initials
-                             flex
-                             partial-completion
+   (setq completion-styles '(partial-completion
+                             substring
                              orderless)))
 #+end_src
 * Window Management
