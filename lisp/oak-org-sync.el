@@ -24,7 +24,10 @@
   "Push files from the org sync directory to the remote."
   (interactive)
   (let ((default-directory oak-org/directory))
-    (set-process-sentinel (oak-org-sync/--push) nil)))
+    (set-process-sentinel (oak-org-sync/--push) nil))
+  (with-current-buffer oak-org/buffer
+    (setq-local major-mode 'compilation-mode))
+  (display-buffer oak-org/buffer))
 
 (defun oak-org-sync/pull ()
   "Pull files from the remote to the org sync directory."
@@ -34,7 +37,10 @@
      (oak-org-sync/--pull)
      (lambda (_ y)
        (when (equal y "finished\n")
-                    (org-revert-all-org-buffers))))))
+         (org-revert-all-org-buffers)))))
+  (with-current-buffer oak-org/buffer
+    (setq-local major-mode 'compilation-mode))
+  (display-buffer oak-org/buffer))
 
 (defun oak-org-sync/--pull ()
   "Pull files from the remote to the org sync directory."
