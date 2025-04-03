@@ -275,6 +275,11 @@ screen real estate.
            (display-buffer-in-side-window)
            (side . right)
            (window-width . 0.20))
+          ("\\*Org Sync\\*"
+           (display-buffer-at-bottom)
+           (window-height . 0.15)
+           (side . botttom)
+           (slot . 1))
           ("\\*Org Babel Results\\*"
            (display-buffer-in-side-window)
            (window-height . 0.15)
