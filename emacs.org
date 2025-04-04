@@ -450,6 +450,13 @@ The backbone of support for software development
       (oak/define-mode-keymap csharp-mode-map '("C-. gd" . xref-find-definitions))
       (oak/define-mode-keymap csharp-mode-map '("C-. gr" . xref-find-references)))
   #+END_SRC
+** Clojure
+#+begin_src emacs-lisp
+  (oak-package/require 'clojure-mode)
+  (oak-package/require 'inf-clojure)
+
+  (add-hook 'clojure-mode-hook #'inf-clojure-minor-mode)
+#+end_src
 ** CSV
 #+begin_src emacs-lisp
   (oak-package/require 'csv-mode
@@ -702,7 +709,8 @@ rclone is used to sync org files across devices, backed by blob storage. The fol
    '((emacs-lisp . t)
      (R . t)
      (python . t)
-     (shell . t)))
+     (shell . t)
+     (clojure . t)))
 #+end_src
 ** Tables
 When copying down values, we do not want to increment.
