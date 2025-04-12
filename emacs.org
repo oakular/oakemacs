@@ -218,6 +218,11 @@ we mainly try to impose *nix patterns on the Window environment.
                              substring
                              orderless)))
 #+end_src
+
+Show completions in a single column down the screen, rather than the horizontal default
+#+begin_src emacs-lisp
+  (setq completions-format 'one-column)
+#+end_src
 * Window Management
 We define some rules about how certain buffers should appear.  This is
 mainly to prevent informative buffers from taking up unnecessary
@@ -453,9 +458,7 @@ The backbone of support for software development
 ** Clojure
 #+begin_src emacs-lisp
   (oak-package/require 'clojure-mode)
-  (oak-package/require 'inf-clojure)
-
-  (add-hook 'clojure-mode-hook #'inf-clojure-minor-mode)
+  (oak-package/require 'cider)
 #+end_src
 ** CSV
 #+begin_src emacs-lisp
