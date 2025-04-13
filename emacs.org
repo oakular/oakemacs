@@ -736,6 +736,11 @@ as gemtext /and/ HTML.
 #+begin_src emacs-lisp
   (oak-package/require 'ox-gemini)
 #+end_src
+*** HTML
+When Org exports to HTML, it needs the htmlize package to provide any decorations to the output.
+#+begin_src emacs-lisp
+  (oak-package/require 'htmlize)
+#+end_src
 * Finance
 ** ESS
 #+begin_src emacs-lisp
