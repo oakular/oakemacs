@@ -63,6 +63,14 @@ rename extant buffers and move on.
   (setq async-shell-command-buffer 'rename-buffer)
   (setq async-shell-command-display-buffer nil)
 #+end_src
+
+Enabling which-key-mode makes browsing the various commands available considerably easier
+#+begin_src emacs-lisp
+  (setq which-key-show-early-on-C-h t)
+  (setq which-key-idle-delay .2)
+  (which-key-mode t)
+#+end_src
+
 ** Files
 #+begin_src emacs-lisp
   (add-hook 'before-save-hook 'whitespace-cleanup)
