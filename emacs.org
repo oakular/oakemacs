@@ -247,6 +247,7 @@ screen real estate.
            (body-function . select-window))
           ("\\*\\(compilation\\|vc-git :\\|dotnet-process\\).*"
            (display-buffer-at-bottom)
+           (dedicated . t)
            (window-height . 0.20))
           ("\\*vc-\\(diff\\|change-log\\)\\*"
            (display-buffer-reuse-mode-window display-buffer-same-window)
@@ -262,7 +263,9 @@ screen real estate.
            (window-parameters . ((mode-line-format . none))))
           ("\\*xref.*"
            (display-buffer-reuse-mode-window display-buffer-below-selected)
-           (window-height . fit-window-to-buffer))
+           (dedicated . t)
+           (window-height . fit-window-to-buffer)
+           (window-parameters . ((mode-line-format . none))))
           ("\\*Eshell Command Output\\*"
            (display-buffer-in-side-window)
            (window-height . 0.15)
