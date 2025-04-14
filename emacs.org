@@ -241,32 +241,28 @@ screen real estate.
   (setq display-buffer-alist
         `(("\\*Help.*"
            (display-buffer-in-side-window)
-           (window-width . 0.3)
+           (window-width . 0.4)
            (side . right)
-           (slot . 0))
+           (slot . 0)
+           (body-function . select-window))
           ("\\*\\(compilation\\|vc-git :\\|dotnet-process\\).*"
            (display-buffer-at-bottom)
            (window-height . 0.20))
           ("\\*vc-\\(diff\\|change-log\\)\\*"
-           (display-buffer-in-side-window)
-           (side . right)
-           (slot . 0)
-           (window-width . 0.30))
+           (display-buffer-reuse-mode-window display-buffer-same-window)
+           (body-function . select-window))
           ("\\*log-edit-files\\*"
            (display-buffer-in-side-window)
            (side . left)
            (slot . 1)
            (window-width . 0.30))
-          ("^CAPTURE-.*"
-           (display-buffer-in-side-window)
-           (side . bottom)
-           (slot . -1)
-           (window-height . 0.20));
+          ("\\*Capture\\*"
+           (display-buffer-reuse-mode-window display-buffer-below-selected)
+           (window-height . fit-window-to-buffer)
+           (window-parameters . ((mode-line-format . none))))
           ("\\*xref.*"
-           (display-buffer-in-side-window)
-           (window-height . 0.33)
-           (side . bottom)
-           (slot . 1))
+           (display-buffer-reuse-mode-window display-buffer-below-selected)
+           (window-height . fit-window-to-buffer))
           ("\\*Eshell Command Output\\*"
            (display-buffer-in-side-window)
            (window-height . 0.15)
@@ -279,6 +275,7 @@ screen real estate.
            (slot . 1))
           ("\\*.*\\(e?shell\\|v?term\\|ansi-term\\).*"
            (display-buffer-reuse-mode-window display-buffer-at-bottom)
+           (dedicated . t)
            (window-height . 0.2))
           ("^\\(magit:\\|*vc-dir\\|*Ledger Report\\).*"
            (display-buffer-in-side-window)
@@ -294,10 +291,9 @@ screen real estate.
            (side . botttom)
            (slot . 1))
           ("\\*Org Babel Results\\*"
-           (display-buffer-in-side-window)
-           (window-height . 0.15)
-           (side . bottom)
-           (slot . -1))))
+           (display-buffer-reuse-mode-window display-buffer-below-selected)
+           (window-height . fit-window-to-buffer)
+           (window-parameters . ((mode-line-format . none))))))
 
 
   (add-hook 'help-mode-hook #'visual-line-mode)
