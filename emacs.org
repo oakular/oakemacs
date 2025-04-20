@@ -206,8 +206,8 @@ we mainly try to impose *nix patterns on the Window environment.
 ** macOS
 #+begin_src emacs-lisp
   (when MACOS
-    (setq mac-option-modifier 'none)
-    (setq mac-right-option-modifier 'alt)
+    (setq mac-option-modifier 'super)
+    (setq mac-right-option-modifier 'none)
     (setq mac-command-modifier 'meta))
 #+end_src
 * Completion
