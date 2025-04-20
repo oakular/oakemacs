@@ -12,6 +12,8 @@
 (setq org-agenda-todo-ignore-scheduled 'future)
 (setq org-agenda-tags-todo-honor-ignore-options t)
 
+(add-hook 'org-agenda-mode-hook #'hl-line-mode)
+
 (setq org-agenda-custom-commands
       '(("i" "Inbox"
          ((tags "CATEGORY=\"Inbox\""
