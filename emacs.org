@@ -837,7 +837,7 @@ GPG has some usability issues so we use age to encrypt files now.
   (setq eww-header-line-format "%u - %t")
 
   (setq url-cookie-untrusted-urls '(".*"))
-  (setq eww-search-prefix "http://localhost:80/?q=")
+  (setq eww-search-prefix "https://html.duckduckgo.com/html?q=")
   (setq eww-bookmarks-directory (expand-file-name (concat user-emacs-directory "eww/")))
   (setq eww-history-limit 300)
   (setq eww-browse-url-new-window-is-tab nil)
