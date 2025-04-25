@@ -402,11 +402,7 @@ The backbone of support for software development
     (setq eglot-confirm-server-initiated-edits nil)
     (setq eglot-connect-timeout 180)
 
-    (let ((omnisharp-path (if WINDOWS
-                              "~/bin/omnisharp/OmniSharp.exe"
-                            "~/bin/omnisharp/OmniSharp")))
-      (add-to-list 'eglot-server-programs (list 'csharp-mode . (omnisharp-path "-lsp"))))
-
+    (add-to-list 'eglot-server-programs (list 'csharp-mode . ("csharp-ls")))
     (add-to-list 'eglot-server-programs (list 'python-mode . ("pylsp")))
     (add-to-list 'eglot-server-programs (list 'bicep-mode . ("~/bin/bicep-langserver/Bicep.LangServer.exe")))
 
@@ -726,7 +722,8 @@ rclone is used to sync org files across devices, backed by blob storage. The fol
      (R . t)
      (python . t)
      (shell . t)
-     (clojure . t)))
+     (clojure . t)
+     (latex . t)))
 #+end_src
 ** Tables
 When copying down values, we do not want to increment.
