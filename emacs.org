@@ -25,38 +25,37 @@
   #+END_SRC
 * Sane Defaults
   Customize settings will be stored in a separate file.
-  #+BEGIN_SRC emacs-lisp noweb
-    (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-    (show-paren-mode 1)
-    (setq-default indent-tabs-mode nil)
-    (save-place-mode 1)
-    (setq visible-bell t)
-    (setq confirm-kill-emacs 'yes-or-no-p)
-    (setq initial-major-mode 'org-mode)
-    (kill-ring-deindent-mode 1)
-    (pixel-scroll-precision-mode 1)
+#+BEGIN_SRC emacs-lisp noweb
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (show-paren-mode 1)
+  (setq-default indent-tabs-mode nil)
+  (save-place-mode 1)
+  (setq visible-bell t)
+  (setq confirm-kill-emacs 'yes-or-no-p)
+  (setq initial-major-mode 'org-mode)
+  (kill-ring-deindent-mode 1)
+  (pixel-scroll-precision-mode 1)
 
-    (defun oak/reload-config () "Reloads the configuration."
-           (interactive)
-           (load-file (expand-file-name "init.el" user-emacs-directory)))
+  (defun oak/reload-config () "Reloads the configuration."
+         (interactive)
+         (load-file (expand-file-name "init.el" user-emacs-directory)))
 
-    (defun oak/open-config () "Open the configuration project in a dired buffer."
-              (interactive)
-              (dired user-emacs-directory))
+  (defun oak/open-config () "Open the configuration project in a dired buffer."
+            (interactive)
+            (dired user-emacs-directory))
 
-    (defun oak/backup-init (dirname) "Sets a backup directory under user-emacs-directory"
-           (let ((oak-backup-dir (concat user-emacs-directory dirname)))
-             (unless (file-directory-p oak-backup-dir)
-               (make-directory oak-backup-dir t))
-             (setq backup-directory-alist
-                   `(("." . ,oak-backup-dir)))))
+  (defun oak/backup-init (dirname) "Sets a backup directory under user-emacs-directory"
+         (let ((oak-backup-dir (concat user-emacs-directory dirname)))
+           (unless (file-directory-p oak-backup-dir)
+             (make-directory oak-backup-dir t))
+           (setq backup-directory-alist
+                 `(("." . ,oak-backup-dir)))))
 
-    (oak/backup-init "backups")
+  (oak/backup-init "backups")
 
-    (defun oak/add-auto-mode (ext mode) "Appends to pairing parameter to the auto-mode alist"
-           (add-to-list 'auto-mode-alist `(,(concat "\\" ext "\\'") . ,mode)))
-
-  #+END_SRC
+  (defun oak/add-auto-mode (ext mode) "Appends to pairing parameter to the auto-mode alist"
+         (add-to-list 'auto-mode-alist `(,(concat "\\" ext "\\'") . ,mode)))
+#+END_SRC
 
 It can be irritating when running multiple async commands to be
 prompted each time for what to do with the existing buffer(s). Just
@@ -73,6 +72,12 @@ Enabling which-key-mode makes browsing the various commands available considerab
   (which-key-mode t)
 #+end_src
 
+On macOS, we want horizontal scrolling to work using the trackpad
+#+begin_src emacs-lisp
+  (when MACOS
+    (setq mouse-wheel-flip-direction t)
+    (setq mouse-wheel-tilt-scroll t))
+#+end_src
 ** Files
 #+begin_src emacs-lisp
   (add-hook 'before-save-hook 'whitespace-cleanup)
